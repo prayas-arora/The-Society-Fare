@@ -1,0 +1,124 @@
+body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
+body {font-size:16px;}
+.w3-half img{margin-bottom:-6px;margin-top:16px;opacity:0.8;cursor:pointer}
+.w3-half img:hover{opacity:1}
+
+/* LOGIN FORM */
+/* Full-width input fields */
+#loginForm input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+#loginForm button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+#loginForm button:hover {
+    opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+#loginForm .cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+}
+
+/* Center the image and position the close button */
+#loginForm .imgcontainer {
+    text-align: center;
+    margin: 48px 0 36px 0;
+    position: relative;
+}
+
+#loginForm img.avatar {
+    width: 35%;
+    border-radius: 50%;
+}
+
+#loginForm .container-fluid {
+    padding: 16px;
+}
+
+#loginForm span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+/* The Modal (background) */
+#loginForm .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 2; /* Sit on top */
+    left: 100px;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+/* Modal Content/Box */
+#loginForm .modal-content {
+    background-color: #fefefe;
+    margin: -3% auto 15% auto; /* -5% from the top, 15% from the bottom and centered */
+    border: 1px solid #888;
+    width: 40%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button (x) */
+#loginForm .close {
+    position: absolute;
+    right: 20px;
+    top: -25px;
+    color: #000;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+#loginForm .close:hover,
+#loginForm .close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Add Zoom Animation */
+#loginForm .animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)} 
+    to {-webkit-transform: scale(1)}
+}
+    
+@keyframes animatezoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+    #loginForm span.psw {
+       display: block;
+       float: none;
+    }
+    #loginForm .cancelbtn {
+       width: 100%;
+    }
+} 
