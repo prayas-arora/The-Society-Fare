@@ -2,22 +2,30 @@
 require 'core.inc.php';
 require 'connect.inc.php';
 
+if (loggedin()) {
+  $firstname = getfield('users','firstname');
+  $lastname = getfield('users','lastname');
+
+  
+  echo '<div style="margin-left: 22.5%;"><h5>Hello '.$firstname.' '.$lastname.'</h5></div>';      
+}
 ?>
 
+<!--Logging Users IN-->
 <?php
-
+global $user_id;
 if (isset($_POST['username']) && isset($_POST['password'])) {
   $username = $_POST['username'];
   $password = $_POST['password'];
-  $password_hash = md5($password);
   if (!empty($username) && !empty($password)) {
-    $query = @"SELECT `id` FROM `users` WHERE `username` = '$username' AND `password` = '$password_hash'; ";
+  $password_hash = md5($password);
+    $query = @"SELECT `id` FROM `users` WHERE `username` = '".mysqli_real_escape_string($conn,$username)."' AND `password` = '".mysqli_real_escape_string($conn,$password_hash)."'; ";
     if ($query_run = @mysqli_query($conn,$query)) {
       $query_num_rows = @mysqli_num_rows($query_run);
       if ($query_num_rows==0) {
         echo '
         <script>
-        document.write(window.alert("The username or password did not match"));
+        document.write(alert("The username or password did not match"));
         </script>
         ';
       }
@@ -36,16 +44,185 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
 ?>
 
+<!--New Event Form Validation-->
+<?php
+
+
+if (loggedin()) {
+  if($_SESSION['user_id'] == 1){
+  $society_table_name = 'ieee_events';
+  $event_gallery = 'ieee_event_gallery';
+}
+if (isset($_POST['event_name']) && isset($_POST['event_date']) && isset($_POST['event_time'])&& isset($_POST['event_venue']) && isset($_POST['event_bio'])) {
+  if (!empty($_POST['event_name'])) {
+    $event_name = $_POST['event_name'];
+  }
+  if (!empty($_POST['event_date'])) {
+    $event_date = $_POST['event_date'];
+  }
+  if (!empty($_POST['event_time'])) {
+    $event_time = $_POST['event_time']; 
+  }
+  if (!empty($_POST['event_venue'])) {
+    $event_venue = $_POST['event_venue'];   
+  }
+  if (!empty($_POST['event_bio'])) {
+    $event_bio = $_POST['event_bio'];
+  }
+  if (!empty($_POST['no_of_students'])) {
+    $no_of_students = $_POST['no_of_students'];
+  }else{
+    $no_of_students = "-";
+  }
+  if (!empty($_POST['event_speaker'])) {
+    $event_speaker = $_POST['event_speaker'];
+  }else{
+    $event_speaker = NULL;
+  }
+
+  //Processing Images
+  $msg = "";
+
+      $valid_formats = array("jpg", "jpeg", "png", "gif", "zip", "bmp");
+      $max_file_size = 1024*1024*10; //10 mb
+      $path = "uploads/"; // Upload directory
+      $count = 0;
+
+      $poster_name = NULL;
+      if ($_FILES['poster_image']['name']) {
+      $poster_name = @$_FILES['poster_image']['name'];
+      $poster_size = @$_FILES['poster_image']['size'];
+      $poster_type = @$_FILES['poster_image']['type'];
+      $poster_tmp_name = @$_FILES['poster_image']['tmp_name'];
+      $extension = strtolower(substr($poster_name, strrpos($poster_name,'.') + 1));
+
+      if (isset($poster_name)) {
+        if(!empty($poster_name)){
+          if (($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') && ($type = 'image/*') && ($poster_size < $max_file_size)) {
+            $location = 'uploads/';
+
+            if(move_uploaded_file($poster_tmp_name, $location.$poster_name)){}
+            else{
+              echo '
+                  <script>
+                    alert("There was an error uploading poster");
+                  </script>
+              ';
+            }
+          }
+          else{
+            echo "Poster must be jpg/jpeg/png and 10mb or less";
+          }
+        }
+      }
+    }
+
+    $query = "INSERT INTO $society_table_name (`event_id`, `event_name`, `event_date`, `event_time`, `event_venue`, `no_of_students`, `event_speaker`, `event_poster`, `brief_bio`) VALUES ('', '$event_name', '$event_date', '$event_time', '$event_venue', '$no_of_students', '$event_speaker', '$poster_name', '$event_bio')";
+  
+    if (mysqli_query($conn,$query)) {}
+      else{
+      echo '
+        <script>
+          alert("Insert query failed!");
+        </script>
+      ';
+    }
+
+      
+// GALLERY Images
+      foreach ($_FILES['gallery_images']['name'] as $f => $name) {     
+        if ($_FILES['gallery_images']['error'][$f] == 4) {
+            continue; // Skip file if any error found
+        }
+        if ($_FILES['gallery_images']['error'][$f] == 0) {             
+            if ($_FILES['gallery_images']['size'][$f] > $max_file_size) {
+                $message[] = "$name is too large!.";
+                continue; // Skip large files
+            }
+        elseif( ! in_array(pathinfo($name, PATHINFO_EXTENSION), $valid_formats) ){
+        
+          $message[] = "$name is not a valid format";
+          continue; // Skip invalid file formats
+        }
+            else{ // No error found! Move uploaded files
+
+              $event_id = NULL;
+                if(move_uploaded_file($_FILES["gallery_images"]["tmp_name"][$f], $path.$name)){
+                  $query = "select `event_id` from $society_table_name ORDER BY `event_id` desc LIMIT 1";
+                  if($query_run = mysqli_query($conn,$query)){
+                    if ($row = mysqli_fetch_assoc($query_run)) {
+                      $event_id = $row['event_id'];
+                    }else{
+                      echo '
+                        <script>
+                        alert("There was an error in uploading gallery images");
+                        </script>
+                      ';
+                    }
+                  }else{
+                    echo '
+                      <script>
+                      alert("Check your Query");
+                      </script>
+                    ';
+                  }
+
+                  $sql = "INSERT INTO `$event_gallery` (`event_id`, `images`) VALUES ('$event_id', '$name')";
+                  if(!mysqli_query($conn, $sql)){
+                    echo '
+                      <script>
+                      alert("Check your gallery insertion query");
+                      </script>
+                    ';
+                  }
+                  $count++; // Number of successfully uploaded file
+
+                }
+            }
+        }
+    }
+  
+
+
+}
+
+
+  $result = mysqli_query($conn, "SELECT `images` FROM $event_gallery, $society_table_name where $event_gallery.`event_id` = '$society_table_name.`event_id`'"  );
+}
+?>
+
 <!DOCTYPE html>
 <html>
+<head>
+  <title>Image Upload</title>
+  <link rel="stylesheet" type="text/css" href="css/uploadFile&displayinginDIV_STYLES.css">
+</head>
+<body>
+<div id="content">
+<?php
+if (loggedin()) {
+  while ($row = mysqli_fetch_assoc($result)) {
+    echo "<div id='img_div'>";
+    echo $row['image'];
+      echo "<img src='uploads/".$row['image']."' >";
+      echo "<p>".$row['image_text']."</p>";
+    echo "</div>";
+  }
+}
+?>
+<html>
+<head>
 <title>The Society Fair</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
 <link rel="stylesheet" type="text/css" href="css/homePageStyles.css">
+<link rel="stylesheet" type="text/css" href="css/homePageStylesAfterLogin.css">
 <!--LIGHTBOX-->
 <link rel="stylesheet" type="text/css" href="lightbox2-master/dist/css/lightbox.css">
+  
+</head>
 <body>
 
 <!-- Sidebar/menu -->
@@ -65,8 +242,11 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
     <?php
     if (!loggedin()) {
-      echo '<a href="#login" id="loginToggle" onclick="document.getElementById(`id01`).style.display=`block`" class="w3-bar-item w3-button w3-hover-white">Society Coordinator Login</a>';
+      echo '<a onclick="document.getElementById(`id01`).style.display=`block`" class="w3-bar-item w3-button w3-hover-white">Society Coordinator Login</a>';
+
     }else{
+      echo '<a onclick="document.getElementById(`ADD_EVENT`).style.display=`block`" class="w3-bar-item w3-button w3-hover-white">Add an Event</a>';
+
      echo '<a href="logout.php" class="w3-bar-item w3-button w3-hover-white">Logout</a>';
     }
     ?>  
@@ -94,14 +274,58 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
       <div class="container-fluid">
           <label><b>Username</b></label>
-          <input type="text" placeholder="Enter Username" name="username" required>
+          <input type="text" placeholder="Enter Username" name="username" minlength="4" maxlength="50" required>
 
           <label><b>Password</b></label>
-          <input type="password" placeholder="Enter Password" name="password" required>
+          <input type="password" placeholder="Enter Password" name="password" minlength="6" required>
             
           <button type="submit">Login</button>
       
           <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+        </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Event Form-->
+<div id="newEventForm">
+  <div id="ADD_EVENT" class="modal">
+    <form class = "modal-content animate" action = "<?php echo $current_file; ?>" method = "POST" enctype="multipart/form-data">
+      <div class="imgcontainer">
+        <span onclick="document.getElementById('ADD_EVENT').style.display='none'" class="close" title="Close Modal">&times;</span>
+      </div>
+
+      <div class="container-fluid">
+          <label><b>Event Name</b></label>
+          <input type="text" placeholder="Enter Event Name" name="event_name" maxlength="100" required>
+
+          <label><b>Date</b></label>
+          <input type="text" placeholder="Enter Event Date" name="event_date" maxlength="30" required>
+
+          <label><b>Time</b></label>
+          <input type="text" placeholder="Enter Event Time" name="event_time" maxlength="30" required>
+
+          <label><b>Venue</b></label>
+          <input type="text" placeholder="Enter Event Venue" name="event_venue" maxlength="30" required>
+
+          <label><b>No. of students</b></label>
+          <input type="text" placeholder="Enter the no. of students who attended the event" name="no_of_students" >
+
+          <label><b>Speaker</b></label>
+          <input type="text" placeholder="Enter Speaker Name" name="event_speaker" >
+          
+          <label><b>Brief Bio:</b></label>
+          <textarea id="bio_text" cols="59.9%" rows="8" name="event_bio" placeholder="Enter a brief bio about the event" required></textarea><br><br>
+
+          <label><b>Event poster &nbsp</b></label>
+          <input type="file" name="poster_image"><br><br>
+
+          <label><b>Event images</b></label>
+          <input type="file" name="gallery_images[]" multiple="multiple" accept="image/*"/><br><br>
+
+          <button type="submit">Add Event</button>
+      
+          <button type="button" onclick="document.getElementById('ADD_EVENT').style.display='none'" class="cancelbtn">Cancel</button>
         </div>
     </form>
   </div>
@@ -163,7 +387,6 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
     dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
     incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     </p>
-    <!--p><b>Our designers are thoughtfully chosen</b>:</--p>
   </div>
 
   <!-- IEEE -->
@@ -175,7 +398,6 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
     dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
     incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     </p>
-    <!--p><b>Our designers are thoughtfully chosen</b>:</p-->
   </div>
   <ul>
         <br><li style="cursor: pointer;" onclick="toggle('2k17')"><h5>Events: 2k17</h5></li><br>
@@ -299,22 +521,31 @@ function w3_close() {
 }
 
 // Get the Login Form modal
-var modal = document.getElementById('id01');
+var modal_1 = document.getElementById('id01');
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
+    if (event.target == modal_1) {
+        modal_1.style.display = "none";
     }
 }
 
-// Modal Image Gallery
-function onClick(element) {
-  document.getElementById("img01").src = element.src;
-  document.getElementById("modal01").style.display = "block";
-  var captionText = document.getElementById("caption");
-  captionText.innerHTML = element.alt;
+// Get the ADD_EVENT Form modal
+var modal_2 = document.getElementById('ADD_EVENT');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal_2) {
+        modal_2.style.display = "none";
+    }
 }
+// Modal Image Gallery
+//function onClick(element) {
+  //document.getElementById("img01").src = element.src;
+  //document.getElementById("modal01").style.display = "block";
+  //var captionText = document.getElementById("caption");
+  //captionText.innerHTML = element.alt;
+//}
 
 function toggle(temp) {
     var x = document.getElementById(temp);

@@ -7,7 +7,12 @@ $mysql_db = 'the society fare';
 $conn = @mysqli_connect($mysql_host,$mysql_user,$mysql_pass,$mysql_db);
 if (mysqli_connect_errno())
   {
-  echo "Failed to connect to database: ";
+  echo '
+  		<script>
+  			alert("Failed to connect to database: ");
+  		</script>
+  ';
+  die();
   }
 
 
