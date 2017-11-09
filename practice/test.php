@@ -1,3 +1,3 @@
 <?php
-echo md5('ccs123');
+echo md5('IEEE123');
 ?>
