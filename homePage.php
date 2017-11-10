@@ -811,67 +811,140 @@ if (loggedin()) {
         <br><li style="cursor: pointer;" onclick="toggle('2k17')"><h5>Events: 2k17</h5></li><br>
         <ul id="2k17" style="display: none;">
           <?php
-          $display_query = "select * from $society_table_name where `event_year` = '2017' ORDER BY `event_id` DESC";
+          $display_query = "select * from `ieee_events` where `event_year` = '2017' ORDER BY `event_id` DESC";
           $display_query_run = mysqli_query($conn,$display_query);
-            while ($row = mysqli_fetch_assoc($display_query_run)) {
-              if ($row['curr_no_of_sub_events'] != 0) {
-                echo '';
-              }else{
-                echo '<li style="cursor: pointer;" onclick="toggle(`Event_1_2k17`)">'.$row['event_name'].'</li>';
-                echo '<div id="Event_1_2k17" style="display: none;">';
-
-                echo '<h4><b>'.$row['event_name'].'</b></h4>';
+            while ($row = mysqli_fetch_assoc($display_query_run)){
+              if ($row['curr_no_of_sub_events'] > 0) {
                 
-                ?>
-                <p style="white-space: pre-wrap;
-                text-align: justify;
-                text-align-last: left;">
-                <b>IEEE Student Chapter, Thapar University</b>
-<b>IEEE Event :           </b> <?php echo $row['event_name'];?>
-<?php
-                  if($row['event_year'] != NULL) {echo '<br><b>Date :                     </b>';        echo $row['event_year'];}          
-                  if($row['event_venue'] != NULL){echo '<br><b>Venue :                  </b>';        echo $row['event_venue'];}
-                  if($row['event_time'] != NULL){echo '<br><b>Time :                     </b>';       echo $row['event_time'];}
-                  if($row['no_of_students'] != NULL){echo '<br><b>No. of students : </b>';        echo $row['no_of_students'];}
-                  echo '<br><b>Facebook Link :   </b>';    echo '<a href="https://www.facebook.com/ieee.thapar/" style="color: blue;">facebook/ieee</a>';
-                  if($row['event_speaker'] != NULL){echo '<br><b>Speaker :               </b>';        echo $row['event_speaker'].'<br>';}
-                  if($row['brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $row['brief_bio'];}
-                  if($row['event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="IEEE/uploads/posters/main_events/'.$row['event_poster'].'"><br>';}
-                  if($row['event_report'] != NULL) {echo '<br><br><b>Report : </b>';        echo $row['event_report'];}
-                    echo '</p>';
+                  $main_event_id = $row['event_id'];
+               
+                  echo '<li style="cursor: pointer;" onclick="toggle(`Event_'.$main_event_id.'_2k17`)">'.$row['event_name'].'';
+                    echo '<ul>';
+                          $display_sub_event_query = "select * from `ieee_sub_events` where `main_event_id` = '$main_event_id' ORDER BY `sub_event_id` DESC ";
+                          $display_sub_event_query_run = mysqli_query($conn,$display_sub_event_query);
+
+                          while ($row_sub_event = mysqli_fetch_assoc($display_sub_event_query_run)) {
+                        $sub_event_id = $row_sub_event['sub_event_id'];
+                        $sub_event_name = $row_sub_event['sub_event_name'];
+                        
+                  echo '<li style="cursor: pointer;" onclick="toggle(`Event_sub_event_'.$sub_event_id.'_2k17`)">'.$sub_event_name.'</li>';
+                  echo '<div id="Event_sub_event_'.$sub_event_id.'_2k17" style="display: none;">';
+
+                  echo '<h4><b>'.$sub_event_name.'</b></h4>';
+                  
+                  ?>
+                  <p style="white-space: pre-wrap;
+                  text-align: justify;
+                  text-align-last: left;">
+                  <b>IEEE Student Chapter, Thapar University</b>
+  <b>IEEE Event :           </b> <?php echo $row_sub_event['sub_event_name'];?>
+  <?php
+                    if($row_sub_event['sub_event_year'] != NULL) {echo '<br><b>Date :                     </b>';        echo $row_sub_event['sub_event_year'];}          
+                    if($row_sub_event['sub_event_venue'] != NULL){echo '<br><b>Venue :                  </b>';        echo $row_sub_event['sub_event_venue'];}
+                    if($row_sub_event['sub_event_time'] != NULL){echo '<br><b>Time :                     </b>';       echo $row_sub_event['sub_event_time'];}
+                    if($row_sub_event['sub_event_no_of_students'] != NULL){echo '<br><b>No. of students : </b>';        echo $row_sub_event['sub_event_no_of_students'];}
+                    echo '<br><b>Facebook Link :   </b>';    echo '<a href="https://www.facebook.com/ieee.thapar/" style="color: blue;">facebook/ieee</a>';
+                    if($row_sub_event['sub_event_speaker'] != NULL){echo '<br><b>Speaker :               </b>';        echo $row_sub_event['sub_event_speaker'].'<br>';}
+                    if($row_sub_event['sub_event_brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $row_sub_event['sub_event_brief_bio'];}
+                    if($row_sub_event['sub_event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="IEEE/uploads/posters/main_events/'.$row_sub_event['sub_event_poster'].'"><br>';}
+                    if($row_sub_event['sub_event_report'] != NULL) {echo '<br><br><b>Report : </b>';        echo $row_sub_event['sub_event_report'];}
+                      echo '</p>';
+
+                    echo '
+                    <div class="row">
+                      <div class="column">';
+                      $this_sub_event_query = "select `sub_event_image` from `ieee_event_gallery` where `main_event_id` = '$main_event_id' and `sub_event_id` = '$sub_event_id'";
+                      $this_sub_event_query_run = mysqli_query($conn,$this_sub_event_query);
+                      $count_sub_event = 1;
+                      $this_sub_event_query_num_rows = mysqli_num_rows($this_sub_event_query_run);
+
+                      if($this_sub_event_query_num_rows != 0){
+                        
+                        while ($row_sub_event_gallery = mysqli_fetch_assoc($this_sub_event_query_run)) {
+                          $sub_event_gallery_image = $row_sub_event_gallery['sub_event_image'];
+                          if($count_sub_event == 1){
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$sub_event_gallery_image.'" rel="lightbox[IEEE-event]" style="text-decoration: none;"> <b><h5>Sub Event Gallery</b></h5> </a>';
+                          $count_sub_event++;
+                          }
+                          else{
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$sub_event_gallery_image.'" rel="lightbox[IEEE-event]"></a>';
+                          $count_sub_event++;
+                          }
+                        
+                        }
+                      }
+                    echo '</div>
+                        </div>
+                      </div>';
+                      }
+                    echo '</ul>';
+                    
+                      echo '</li>';
+
+
+              }else{
+
+                  $main_event_id = $row['event_id'];
+                  $main_event_name = $row['event_name'];
 
                   echo '
-                  <div class="row">
-                    <div class="column">';
-                    $main_event_id = $row['event_id'];
-                    $this_query = "select `main_event_image` from $event_gallery where `main_event_id` = '$main_event_id'";
-                    $this_query_run = mysqli_query($conn,$this_query);
-                    $count = 1;
-                    $this_query_num_rows = mysqli_num_rows($this_query_run);
-                    if($this_query_num_rows != 0){
-                      while ($row_gallery = mysqli_fetch_assoc($this_query_run)) {
-                        $gallery_image = $row_gallery['main_event_image'];
-                        if($count == 1){
-                        echo '<a href="IEEE/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox[IEEE-event]" style="text-decoration: none;"> <b><h5>Event Gallery</b></h5> </a>';
-                        $count++;
-                        }
-                        else{
-                        echo '<a href="IEEE/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox[IEEE-event]"></a>';
-                        $count++;
-                        }
-                      
-                      }
-                    }
-                     echo '</div>
-                      </div>
-                  
-                    </div>
-                    </ul>
-          ';
-                    }
-              }
+                    <script>
+                    alert('.$main_event_name.');
+                    </script>
+                  ';
+                  echo '<li style="cursor: pointer;" onclick="toggle(`Event_'.$main_event_id.'_2k17`)">'.$main_event_name.'</li>';
+                  echo '<div id="Event_'.$main_event_id.'_2k17" style="display: none;">';
 
-  
+                  echo '<h4><b>'.$main_event_name.'</b></h4>';
+                  
+                  ?>
+                  <p style="white-space: pre-wrap;
+                  text-align: justify;
+                  text-align-last: left;">
+                  <b>IEEE Student Chapter, Thapar University</b>
+  <b>IEEE Event :           </b> <?php echo $row['event_name'];?>
+  <?php
+                    if($row['event_year'] != NULL) {echo '<br><b>Date :                     </b>';        echo $row['event_year'];}          
+                    if($row['event_venue'] != NULL){echo '<br><b>Venue :                  </b>';        echo $row['event_venue'];}
+                    if($row['event_time'] != NULL){echo '<br><b>Time :                     </b>';       echo $row['event_time'];}
+                    if($row['no_of_students'] != NULL){echo '<br><b>No. of students : </b>';        echo $row['no_of_students'];}
+                    echo '<br><b>Facebook Link :   </b>';    echo '<a href="https://www.facebook.com/ieee.thapar/" style="color: blue;">facebook/ieee</a>';
+                    if($row['event_speaker'] != NULL){echo '<br><b>Speaker :               </b>';        echo $row['event_speaker'].'<br>';}
+                    if($row['brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $row['brief_bio'];}
+                    if($row['event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="IEEE/uploads/posters/main_events/'.$row['event_poster'].'"><br>';}
+                    if($row['event_report'] != NULL) {echo '<br><br><b>Report : </b>';        echo $row['event_report'];}
+                      echo '</p>';
+
+                    echo '
+                    <div class="row">
+                      <div class="column">';
+                      $this_query = "select `main_event_image` from `ieee_event_gallery` where `main_event_id` = '$main_event_id'";
+                      $this_query_run = mysqli_query($conn,$this_query);
+                      $count = 1;
+                      $this_query_num_rows = mysqli_num_rows($this_query_run);
+                      if($this_query_num_rows != 0){
+                        while ($row_gallery = mysqli_fetch_assoc($this_query_run)) {
+                          $gallery_image = $row_gallery['main_event_image'];
+                          if($count == 1){
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox[IEEE-event]" style="text-decoration: none;"> <b><h5>Event Gallery</b></h5> </a>';
+                          $count++;
+                          }
+                          else{
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox[IEEE-event]"></a>';
+                          $count++;
+                          }
+                        
+                        }
+                      }
+                    echo '</div>
+                        </div>
+                      </div>';
+                      }
+
+                }
+
+                         
+                  echo   '</ul>';
 
         ?>
         
@@ -1006,7 +1079,6 @@ function mess(){
 lightbox.option({
       'fitImagesInViewport': true,
       'resizeDuration': 400,
-      'wrapAround': true,
       'maxWidth': .7*(screen.width),
       'maxHeight': .7*(screen.height)
     })
