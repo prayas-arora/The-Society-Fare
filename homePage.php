@@ -50,6 +50,10 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 <?php
 
 if (loggedin()) {
+  global $society_table_name;
+  global $society_sub_event_table_name;
+  global $event_gallery;
+  
   if($_SESSION['user_id'] == 1 || $_SESSION['user_id'] == 2){
     $society_table_name = 'ccs_events';
     $society_sub_event_table_name = 'ccs_sub_events';
@@ -272,11 +276,11 @@ if (loggedin()) {
     if ($check_main_events_query_run = mysqli_query($conn,$check_main_events_query)) {
     $query_num_rows = mysqli_num_rows($check_main_events_query_run);
       if ($query_num_rows ==0 ) {
-        echo '
+        /*echo '
               <script>
                 alert("There are no existing main events in the society database.");
               </script>
-            ';
+            ';*/
         //header('Location: homePage.php');
         //exit;
       }
@@ -507,17 +511,22 @@ if (loggedin()) {
                     }
 
 
-                    $sql = "INSERT INTO `$event_gallery` (`main_event_id`, `sub_event_id`, `sub_event_image`) VALUES ('$main_event_id', '$sub_event_id', '$name')";
+                    $sql = "INSERT INTO `ieee_event_gallery` (`main_event_id`, `sub_event_id`, `sub_event_image`) VALUES ('$main_event_id', '$sub_event_id', '$name')";
                     if(!mysqli_query($conn, $sql)){
                       echo '
                         <script>
                         alert("Check your sub_event gallery insertion query");
                         </script>
                       ';
-                    }
+                    }else{
+                      echo '
+                      <script>
+                      alert("hkdsal");
+                      </script>
+                      ';
                       $count++; // Number of successfully uploaded file
+                    }
                       
-
                   }
               }
           }
@@ -551,6 +560,96 @@ if (loggedin()) {
 <!--LIGHTBOX-->
 <link rel="stylesheet" type="text/css" href="lightbox2-master/dist/css/lightbox.css">
 <script src="lightbox2-master/dist/js/lightbox-plus-jquery.js"></script>
+
+<!-- DELETING a sub-event-->
+<script type="text/javascript">
+  var delete_main_event_id;
+  var delete_sub_event_id;
+function delete_sub_event(main_event_id,sub_event_id)
+{
+  /*window.alert(""+main_event_id+" "+sub_event_id+" ");*/
+     if(confirm('Sure To Remove This Record ?'))
+     {
+        window.location.href="homePage.php?delete_main_event_id="+main_event_id+"&delete_sub_event_id="+sub_event_id;
+     }
+     //delete_main_event_id=main_event_id;
+     //delete_sub_event_id=sub_event_id;
+     //+"&delete_sub_event_id="+sub_event_id
+}
+</script>
+
+<?php
+
+if(loggedin()){
+  
+    if(isset($_GET['delete_main_event_id']) && isset($_GET['delete_sub_event_id']))
+  {
+       $delete_main_event_id = $_GET['delete_main_event_id'];
+       $delete_sub_event_id = $_GET['delete_sub_event_id'];
+
+        $delete_sub_event_query_1 = "DELETE FROM `$society_sub_event_table_name` WHERE `main_event_id` = '$delete_main_event_id' and `sub_event_id` = '$delete_sub_event_id'";
+        $delete_sub_event_query_2 = "DELETE FROM `$event_gallery` where `main_event_id` = '$delete_main_event_id' and `sub_event_id` = '$delete_sub_event_id'";
+        $help_query = "select `curr_no_of_sub_events` from $society_table_name where `event_id` = '$delete_main_event_id' ";
+        $help_query_run = mysqli_query($conn,$help_query);
+        $curr_no_of_sub_events = 0;
+        if(mysqli_num_rows($help_query_run) == 1){
+          while ($row = mysqli_fetch_assoc($help_query_run)) {
+            $curr_no_of_sub_events = $row['curr_no_of_sub_events'];
+          }
+        }
+        $curr_no_of_sub_events--;
+        $delete_sub_event_query_3 = "UPDATE `$society_table_name` SET `curr_no_of_sub_events` = '$curr_no_of_sub_events' where   `event_id` = '$delete_main_event_id';
+       ";
+       
+       if(!(mysqli_query($conn,$delete_sub_event_query_1) && mysqli_query($conn,$delete_sub_event_query_2) && mysqli_query($conn,$delete_sub_event_query_3))){
+          echo '
+          <script>
+          alert("ERROR deleting sub-event!");
+          </script>
+        ';
+        }
+       header("Location: homePage.php");
+  }
+}
+?>
+
+<!-- DELETING an event-->
+<script type="text/javascript">
+  var delete_MAIN_event_id;
+function delete_main_event(main_event_id)
+{
+  /*window.alert(""+main_event_id+"");*/
+     if(confirm('Sure To Remove This Record ?'))
+     {
+        window.location.href="homePage.php?delete_MAIN_event_id="+main_event_id;
+     }
+     //delete_main_event_id=main_event_id;
+     //delete_sub_event_id=sub_event_id;
+     //+"&delete_sub_event_id="+sub_event_id
+}
+</script>
+
+<?php
+
+if(loggedin()){
+  
+    if(isset($_GET['delete_MAIN_event_id']))
+  {
+       $delete_MAIN_event_id = $_GET['delete_MAIN_event_id'];
+        $delete_main_event_query_1 = "DELETE FROM `$society_table_name` WHERE `event_id` = '$delete_MAIN_event_id'";
+        $delete_main_event_query_2 = "DELETE FROM `$event_gallery` WHERE `main_event_id` = '$delete_MAIN_event_id'";
+        
+       if((!mysqli_query($conn,$delete_main_event_query_1) || !mysqli_query($conn,$delete_main_event_query_2) ) ){
+          echo '
+          <script>
+          alert("ERROR deleting event!");
+          </script>
+        ';
+        }
+       header("Location: homePage.php");
+  }
+}
+?>
 
 </head>
 <body>
@@ -827,19 +926,26 @@ if (loggedin()) {
                         $sub_event_id = $row_sub_event['sub_event_id'];
                         $sub_event_name = $row_sub_event['sub_event_name'];
                         
-                  echo '<li style="cursor: pointer;" onclick="toggle(`Event_sub_event_'.$sub_event_id.'_2k17`)">'.$sub_event_name.'</li>';
-                  echo '<div id="Event_sub_event_'.$sub_event_id.'_2k17" style="display: none;">';
+                        $society_table_name = 'ieee_events';
+                        $society_sub_event_table_name = 'ieee_sub_events';
+                        $society_event_gallery_table_name = 'ieee_event_gallery';
 
-                  echo '<h4><b>'.$sub_event_name.'</b></h4>';
+                          echo '<li id = "subList'.$main_event_id.'-'.$sub_event_id.'" style="cursor: pointer; width: 50%" onclick="toggle(`Event_sub_event_'.$main_event_id.'-'.$sub_event_id.'_2k17`)">'.$sub_event_name.'</li><span id = "subSpan'.$main_event_id.'-'.$sub_event_id.'" style="display: inline-block; width: 40%"></span><a id = "subA'.$main_event_id.'-'.$sub_event_id.'" href="javascript: delete_sub_event('.$main_event_id.','.$sub_event_id.')" class="close" style = "color: red; text-decoration:none; display: inline-block; width: 3px; height: 3px;" title="Delete main event and corresponding sub-events">&times;</a>';
+
+                          echo '<div id="Event_sub_event_'.$main_event_id.'-'.$sub_event_id.'_2k17" style="display: none;">';
+
+                          echo '<h4><b>'.$sub_event_name.'</b></h4>';
+                  
                   
                   ?>
+                  
                   <p style="white-space: pre-wrap;
                   text-align: justify;
                   text-align-last: left;">
                   <b>IEEE Student Chapter, Thapar University</b>
   <b>IEEE Event :           </b> <?php echo $row_sub_event['sub_event_name'];?>
   <?php
-                    if($row_sub_event['sub_event_year'] != NULL) {echo '<br><b>Date :                     </b>';        echo $row_sub_event['sub_event_year'];}          
+                    if($row_sub_event['sub_event_date'] != NULL) {echo '<br><b>Date :                     </b>';        echo $row_sub_event['sub_event_date'];}          
                     if($row_sub_event['sub_event_venue'] != NULL){echo '<br><b>Venue :                  </b>';        echo $row_sub_event['sub_event_venue'];}
                     if($row_sub_event['sub_event_time'] != NULL){echo '<br><b>Time :                     </b>';       echo $row_sub_event['sub_event_time'];}
                     if($row_sub_event['sub_event_no_of_students'] != NULL){echo '<br><b>No. of students : </b>';        echo $row_sub_event['sub_event_no_of_students'];}
@@ -863,11 +969,11 @@ if (loggedin()) {
                         while ($row_sub_event_gallery = mysqli_fetch_assoc($this_sub_event_query_run)) {
                           $sub_event_gallery_image = $row_sub_event_gallery['sub_event_image'];
                           if($count_sub_event == 1){
-                          echo '<a href="IEEE/uploads/gallery/main_events/'.$sub_event_gallery_image.'" rel="lightbox[IEEE-event]" style="text-decoration: none;"> <b><h5>Sub Event Gallery</b></h5> </a>';
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$sub_event_gallery_image.'" rel="lightbox[IEEE-event-'.$main_event_id.'-'.$sub_event_id.']" style="text-decoration: none;"> <b><h5>Sub Event Gallery</b></h5> </a>';
                           $count_sub_event++;
                           }
                           else{
-                          echo '<a href="IEEE/uploads/gallery/main_events/'.$sub_event_gallery_image.'" rel="lightbox[IEEE-event]"></a>';
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$sub_event_gallery_image.'" rel="lightbox[IEEE-event-'.$main_event_id.'-'.$sub_event_id.']"></a>';
                           $count_sub_event++;
                           }
                         
@@ -876,7 +982,22 @@ if (loggedin()) {
                     echo '</div>
                         </div>
                       </div>';
+                        if (!loggedin()) {
+                          echo '
+                        <script>
+                        document.getElementById("subSpan'.$main_event_id.'-'.$sub_event_id.'").style.display = "none";
+                        document.getElementById("subA'.$main_event_id.'-'.$sub_event_id.'").style.display = "none";
+                        </script>
+                        ';
+                        }else{
+                          echo '
+                        <script>
+                        document.getElementById("subList'.$main_event_id.'-'.$sub_event_id.'").style.display = "inline-block";
+                        </script>
+                        ';
+                        }
                       }
+                      
                     echo '</ul>';
                     
                       echo '</li>';
@@ -886,13 +1007,11 @@ if (loggedin()) {
 
                   $main_event_id = $row['event_id'];
                   $main_event_name = $row['event_name'];
+  
+                
+                
+                  echo '<li id = "subList'.$main_event_id.'" style="cursor: pointer; width: 50%" onclick="toggle(`Event_'.$main_event_id.'_2k17`)">'.$main_event_name.'</li><span id = "subSpan'.$main_event_id.'" style="display: inline-block; width: 40%"></span><a id = "subA'.$main_event_id.'" href="javascript: delete_main_event('.$main_event_id.')" class="close" style = "color: red; text-decoration:none; display: inline-block; width: 3px; height: 3px;" title="Delete main event and corresponding sub-events">&times;</a>';
 
-                  echo '
-                    <script>
-                    alert('.$main_event_name.');
-                    </script>
-                  ';
-                  echo '<li style="cursor: pointer;" onclick="toggle(`Event_'.$main_event_id.'_2k17`)">'.$main_event_name.'</li>';
                   echo '<div id="Event_'.$main_event_id.'_2k17" style="display: none;">';
 
                   echo '<h4><b>'.$main_event_name.'</b></h4>';
@@ -904,7 +1023,7 @@ if (loggedin()) {
                   <b>IEEE Student Chapter, Thapar University</b>
   <b>IEEE Event :           </b> <?php echo $row['event_name'];?>
   <?php
-                    if($row['event_year'] != NULL) {echo '<br><b>Date :                     </b>';        echo $row['event_year'];}          
+                    if($row['event_date'] != NULL) {echo '<br><b>Date :                     </b>';        echo $row['event_date'];}          
                     if($row['event_venue'] != NULL){echo '<br><b>Venue :                  </b>';        echo $row['event_venue'];}
                     if($row['event_time'] != NULL){echo '<br><b>Time :                     </b>';       echo $row['event_time'];}
                     if($row['no_of_students'] != NULL){echo '<br><b>No. of students : </b>';        echo $row['no_of_students'];}
@@ -926,11 +1045,11 @@ if (loggedin()) {
                         while ($row_gallery = mysqli_fetch_assoc($this_query_run)) {
                           $gallery_image = $row_gallery['main_event_image'];
                           if($count == 1){
-                          echo '<a href="IEEE/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox[IEEE-event]" style="text-decoration: none;"> <b><h5>Event Gallery</b></h5> </a>';
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox[IEEE-event-'.$main_event_id.']" style="text-decoration: none;"> <b><h5>Event Gallery</b></h5> </a>';
                           $count++;
                           }
                           else{
-                          echo '<a href="IEEE/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox[IEEE-event]"></a>';
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox[IEEE-event-'.$main_event_id.']"></a>';
                           $count++;
                           }
                         
@@ -939,7 +1058,23 @@ if (loggedin()) {
                     echo '</div>
                         </div>
                       </div>';
+                      
+                      $count = 0;
                       }
+                      if (!loggedin()) {
+                          echo '
+                        <script>
+                        document.getElementById("subSpan'.$main_event_id.'").style.display = "none";
+                        document.getElementById("subA'.$main_event_id.'").style.display = "none";
+                        </script>
+                        ';
+                        }else{
+                          echo '
+                        <script>
+                        document.getElementById("subList'.$main_event_id.'").style.display = "inline-block";
+                        </script>
+                        ';
+                        }
 
                 }
 
@@ -1078,10 +1213,15 @@ function mess(){
 
 lightbox.option({
       'fitImagesInViewport': true,
+      'wrapAround': false,
       'resizeDuration': 400,
       'maxWidth': .7*(screen.width),
       'maxHeight': .7*(screen.height)
     })
+//Jquery
+$("a > li").click(function(event){
+            event.stopPropagation();
+        });
 
 </script>
 </body>
