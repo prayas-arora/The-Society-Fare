@@ -4,7 +4,6 @@ require 'connect.inc.php';
 if (loggedin()) {
   $firstname = getfield('users','firstname');
   $lastname = getfield('users','lastname');
-
   
   echo '<div style="margin-left: 22.5%;"><h5>Hello '.$firstname.' '.$lastname.'</h5></div>';   
 }
@@ -42,62 +41,45 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
     echo "None of the fields can be empty";
   }
 }
-
 ?>
 
 <!--New Event Form Validation-->
 <?php
-
 if (loggedin()) {
-  global $society_name;
-  global $society_name_CAPS;
   global $society_table_name;
   global $society_sub_event_table_name;
   global $event_gallery;
   
   if($_SESSION['user_id'] == 1 || $_SESSION['user_id'] == 2){
-    $society_name = 'ccs';
-    $society_name_CAPS = 'CCS';
     $society_table_name = 'ccs_events';
     $society_sub_event_table_name = 'ccs_sub_events';
     $event_gallery = 'ccs_event_gallery';
   }
     if($_SESSION['user_id'] == 3 || $_SESSION['user_id'] == 4){
-      $society_name = 'ssa';
-      $society_name_CAPS = 'SSA';
       $society_table_name = 'ssa_events';
       $society_sub_event_table_name = 'ssa_sub_events';
       $event_gallery = 'ssa_event_gallery';
   }
     if($_SESSION['user_id'] == 5){
-      $society_name = 'msc';
-      $society_name_CAPS = 'MSC';
       $society_table_name = 'msc_events';
       $society_sub_event_table_name = 'msc_sub_events';
       $event_gallery = 'msc_event_gallery';
   }
     if($_SESSION['user_id'] == 6){
-      $society_name = 'owasp';
-      $society_name_CAPS = 'OWASP';
       $society_table_name = 'owasp_events';
       $society_sub_event_table_name = 'owasp_sub_events';
       $event_gallery = 'owasp_event_gallery';
   }
     if($_SESSION['user_id'] == 7){
-      $society_name = 'tedx';
-      $society_name_CAPS = 'TEDx';
       $society_table_name = 'tedx_events';
       $society_sub_event_table_name = 'tedx_sub_events';
       $event_gallery = 'tedx_event_gallery';
   }
     if ($_SESSION['user_id'] == 8){
-      $society_name = 'ieee';
-      $society_name_CAPS = 'IEEE';
       $society_table_name = 'ieee_events';
       $society_sub_event_table_name = 'ieee_sub_events';
       $event_gallery = 'ieee_event_gallery';
     }
-
     if (isset($_POST['event_name'])) {
       if (!empty($_POST['event_name'])) {
         $event_name = mysqli_real_escape_string($conn,$_POST['event_name']);
@@ -144,55 +126,21 @@ if (loggedin()) {
       }else{
         $event_speaker = NULL;
       }
-
       //Processing Images
       $msg = "";
-
-      //ATTENDANCE & POSTER  
+      //POSTER  
         $max_file_size = 1024*1024*10; //10 mb
-
-        $attendance_image_name = NULL;
-
-        if (@$_FILES['event_attendance_image']['name']) {
-        $attendance_image_name = @$_FILES['event_attendance_image']['name'];
-        $attendance_image_size = @$_FILES['event_attendance_image']['size'];
-        $attendance_image_type = @$_FILES['event_attendance_image']['type'];
-        $attendance_image_tmp_name = @$_FILES['event_attendance_image']['tmp_name'];
-        $extension = strtolower(substr($attendance_image_name, strrpos($attendance_image_name,'.') + 1));
-
-        if (isset($attendance_image_name)) {
-          if(!empty($attendance_image_name)){
-            if (($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') && ($type = 'image/*') && ($attendance_image_size < $max_file_size)) {
-              $location = 'SOCIETIES DATA/'.$society_name_CAPS.'/uploads/attendance/main_events/';
-
-              if(move_uploaded_file($attendance_image_tmp_name, $location.$attendance_image_name)){}
-              else{
-                echo '
-                    <script>
-                      alert("There was an error uploading attendance");
-                    </script>
-                ';
-              }
-            }
-            else{
-              echo "Attendance image must be jpg/jpeg/png and 10mb or less";
-            }
-          }
-        }
-      }
-
+        $poster_name = NULL;
         if (@$_FILES['poster_image']['name']) {
         $poster_name = @$_FILES['poster_image']['name'];
         $poster_size = @$_FILES['poster_image']['size'];
         $poster_type = @$_FILES['poster_image']['type'];
         $poster_tmp_name = @$_FILES['poster_image']['tmp_name'];
         $extension = strtolower(substr($poster_name, strrpos($poster_name,'.') + 1));
-
         if (isset($poster_name)) {
           if(!empty($poster_name)){
             if (($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') && ($type = 'image/*') && ($poster_size < $max_file_size)) {
-              $location = 'SOCIETIES DATA/'.$society_name_CAPS.'/uploads/posters/main_events/';
-
+              $location = 'IEEE/uploads/posters/main_events/';
               if(move_uploaded_file($poster_tmp_name, $location.$poster_name)){}
               else{
                 echo '
@@ -208,9 +156,7 @@ if (loggedin()) {
           }
         }
       }
-
-      $query = "INSERT INTO $society_table_name (`event_id`, `event_name`, `event_date`, `event_time`, `event_year`, `event_venue`, `no_of_students`, `event_speaker`, `event_attendance`, `event_poster`, `brief_bio`, `event_report`) VALUES ('', '$event_name', '$event_date', '$event_time', '$event_year', '$event_venue', '$no_of_students', '$event_speaker', '$attendance_image_name', '$poster_name', '$event_bio', '$event_report')";
-    
+      $query = "INSERT INTO $society_table_name (`event_id`, `event_name`, `event_date`, `event_time`, `event_year`, `event_venue`, `no_of_students`, `event_speaker`, `event_poster`, `brief_bio`, `event_report`) VALUES ('', '$event_name', '$event_date', '$event_time', '$event_year', '$event_venue', '$no_of_students', '$event_speaker', '$poster_name', '$event_bio', '$event_report')";
     
       if (mysqli_query($conn,$query)) {}
         else{
@@ -219,17 +165,13 @@ if (loggedin()) {
             alert("Insert query failed!");
           </script>
         ';
-        header('Location: homePage.php');
-              exit;
       }
-
         
   // GALLERY Images
         $valid_formats = array("jpg", "jpeg", "png", "gif", "zip", "bmp");
-        $path = "SOCIETIES DATA/".$society_name_CAPS."/uploads/gallery/main_events/"; // Upload directory
+        $path = "IEEE/uploads/gallery/main_events/"; // Upload directory
         $count = 0;
-
-        foreach ($_FILES['gallery_images']['name'] as $f => $name) {    
+        foreach ($_FILES['gallery_images']['name'] as $f => $name) {     
           if ($_FILES['gallery_images']['error'][$f] == 4) {
               echo '
               <script>
@@ -267,7 +209,7 @@ if (loggedin()) {
               else{ // No error found! Move uploaded files
                 $event_id = NULL;
                   if(move_uploaded_file($_FILES["gallery_images"]["tmp_name"][$f], $path.$name)){
-                                        $query = "select `event_id` from $society_table_name ORDER BY `event_id` desc LIMIT 1";
+                    $query = "select `event_id` from $society_table_name ORDER BY `event_id` desc LIMIT 1";
                     if($query_run = mysqli_query($conn,$query)){
                       if ($row = mysqli_fetch_assoc($query_run)) {
                         $event_id = $row['event_id'];
@@ -285,7 +227,6 @@ if (loggedin()) {
                         </script>
                       ';
                     }
-
                     $sql = "INSERT INTO `$event_gallery` (`main_event_id`, `main_event_image`) VALUES ('$event_id', '$name')";
                     if(!mysqli_query($conn, $sql)){
                       echo '
@@ -297,7 +238,6 @@ if (loggedin()) {
                       $count++; // Number of successfully uploaded file
                       
                     }
-
                   }
               }
           }
@@ -306,10 +246,7 @@ if (loggedin()) {
       exit;
     
   }
-
-
     //$result = mysqli_query($conn, "SELECT `images` FROM $event_gallery, $society_table_name where $event_gallery.`event_id` = '$society_table_name.`event_id`'"  );
-
 }
 ?>
 
@@ -330,11 +267,19 @@ if (loggedin()) {
       }
     }
     if ( $query_num_rows > 0) {
-
     if (isset($_POST['sub_event_name']) && isset($_POST['sub_event_year'])) {
-      
+      echo '
+          <script>
+            alert("jkfdvn");
+          </script>
+        ';
       if ($_POST['BIG_event_name'] != NULL) {
         $main_event_name = $_POST['BIG_event_name'];
+        echo '
+          <script>
+            alert("'.$main_event_name.'jkfdvn");
+          </script>
+        ';
       }
       else{
         echo '
@@ -388,44 +333,9 @@ if (loggedin()) {
       }else{
         $sub_event_speaker = NULL;
       }
-
       //Processing Images
       $msg = "";
-
         $max_file_size = 1024*1024*10; //10 mb
-
-        //ATTENDANCE IMAGE
-        $sub_event_attendance_image_name = NULL;
-        if ($_FILES['sub_event_poster_image']['name']) {
-        $sub_event_attendance_image_name = @$_FILES['sub_event_attendance_image']['name'];
-        $sub_event_attendance_image_size = @$_FILES['sub_event_attendance_image']['size'];
-        $sub_event_attendance_image_type = @$_FILES['sub_event_attendance_image']['type'];
-        $sub_event_attendance_image_tmp_name = @$_FILES['sub_event_attendance_image']['tmp_name'];
-        $sub_event_extension = strtolower(substr($sub_event_attendance_image_name, strrpos($sub_event_attendance_image_name,'.') + 1));
-
-        if (isset($sub_event_attendance_image_name)) {
-          if(!empty($sub_event_attendance_image_name)){
-            if (($sub_event_extension == 'jpg' || $sub_event_extension == 'jpeg' || $sub_event_extension == 'png') && ($type = 'image/*') && ($sub_event_attendance_image_size < $max_file_size)) {
-              $location = 'SOCIETIES DATA/'.$society_name_CAPS.'/uploads/attendance/sub_events/';
-
-              if(move_uploaded_file($sub_event_attendance_image_tmp_name, $location.$sub_event_attendance_image_name)){}
-              else{
-                echo '
-                    <script>
-                      alert("There was an error uploading sub-event attendance");
-                    </script>
-                ';
-              }
-            }
-            else{
-              echo "Attendance must be jpg/jpeg/png and 10mb or less";
-            }
-          }
-        }
-      }
-        
-
-        //POSTER
         $sub_event_poster_name = NULL;
         if ($_FILES['sub_event_poster_image']['name']) {
         $sub_event_poster_name = @$_FILES['sub_event_poster_image']['name'];
@@ -433,12 +343,10 @@ if (loggedin()) {
         $sub_event_poster_type = @$_FILES['sub_event_poster_image']['type'];
         $sub_event_poster_tmp_name = @$_FILES['sub_event_poster_image']['tmp_name'];
         $sub_event_extension = strtolower(substr($sub_event_poster_name, strrpos($sub_event_poster_name,'.') + 1));
-
         if (isset($sub_event_poster_name)) {
           if(!empty($sub_event_poster_name)){
             if (($sub_event_extension == 'jpg' || $sub_event_extension == 'jpeg' || $sub_event_extension == 'png') && ($type = 'image/*') && ($sub_event_poster_size < $max_file_size)) {
-              $location = 'SOCIETIES DATA/'.$society_name_CAPS.'/uploads/posters/sub_events/';
-
+              $location = 'IEEE/uploads/posters/sub_events/';
               if(move_uploaded_file($sub_event_poster_tmp_name, $location.$sub_event_poster_name)){}
               else{
                 echo '
@@ -454,10 +362,8 @@ if (loggedin()) {
           }
         }
       }
-
       $sub_event_query = "select `event_id`,`curr_no_of_sub_events` from $society_table_name where `event_name` = '$main_event_name' ";
       $sub_event_query_run = @mysqli_query($conn,$sub_event_query);
-
       if (($query_num_rows = @mysqli_num_rows($sub_event_query_run)) != 1) {
         if($query_num_rows == 0) {
           echo '
@@ -473,7 +379,6 @@ if (loggedin()) {
           </script>
         ';
         }
-
       }else{
        while ($row = mysqli_fetch_assoc($sub_event_query_run)) {
               $main_event_id = $row['event_id'];
@@ -489,7 +394,7 @@ if (loggedin()) {
         header('Location: homePage.php');
         exit;
       }
-      $query = "INSERT INTO $society_sub_event_table_name (`main_event_id`, `sub_event_id`, `sub_event_name`, `sub_event_date`, `sub_event_time`, `sub_event_year`, `sub_event_venue`, `sub_event_no_of_students`, `sub_event_speaker`, `sub_event_attendance`, `sub_event_poster`, `sub_event_brief_bio`, `sub_event_report`) VALUES ('$main_event_id', '$sub_event_id', '$sub_event_name', '$sub_event_date', '$sub_event_time', '$sub_event_year', '$sub_event_venue', '$sub_event_no_of_students', '$sub_event_speaker', '$sub_event_attendance_image_name', '$sub_event_poster_name', '$sub_event_bio', '$sub_event_report')";
+      $query = "INSERT INTO $society_sub_event_table_name (`main_event_id`, `sub_event_id`, `sub_event_name`, `sub_event_date`, `sub_event_time`, `sub_event_year`, `sub_event_venue`, `sub_event_no_of_students`, `sub_event_speaker`, `sub_event_poster`, `sub_event_brief_bio`, `sub_event_report`) VALUES ('$main_event_id', '$sub_event_id', '$sub_event_name', '$sub_event_date', '$sub_event_time', '$sub_event_year', '$sub_event_venue', '$sub_event_no_of_students', '$sub_event_speaker', '$sub_event_poster_name', '$sub_event_bio', '$sub_event_report')";
     
       if (mysqli_query($conn,$query)) {
         $another_query = "UPDATE $society_table_name SET `curr_no_of_sub_events` = $sub_event_id where `event_id` = '$main_event_id'";
@@ -508,13 +413,11 @@ if (loggedin()) {
           </script>
         ';
       }
-
         
   // GALLERY Images
         $valid_formats = array("jpg", "jpeg", "png", "gif", "zip", "bmp");
-        $path = "SOCIETIES DATA/".$society_name_CAPS."/uploads/gallery/sub_events/"; // Upload directory
+        $path = "IEEE/uploads/gallery/sub_events/"; // Upload directory
         $count = 0;
-
         foreach ($_FILES['sub_event_gallery_images']['name'] as $f => $name) {     
           if ($_FILES['sub_event_gallery_images']['error'][$f] == 4) {
             echo '
@@ -551,11 +454,9 @@ if (loggedin()) {
             //continue; // Skip invalid file formats
           }
               else{ // No error found! Move uploaded files
-
                 $sub_event_id = NULL;
                   if(move_uploaded_file($_FILES["sub_event_gallery_images"]["tmp_name"][$f], $path.$name)){
                     $sql_query = "select `sub_event_id` from $society_sub_event_table_name where `main_event_id` = '$main_event_id' ORDER BY sub_event_id desc LIMIT 1";
-
                     if($sql_query_run = mysqli_query($conn,$sql_query)){
                       $query_num_rows = mysqli_num_rows($sql_query_run);
                       if ($query_num_rows == 1) {
@@ -576,9 +477,7 @@ if (loggedin()) {
                         </script>
                       ';
                     }
-
-
-                    $sql = "INSERT INTO `$event_gallery` (`main_event_id`, `sub_event_id`, `sub_event_image`) VALUES ('$main_event_id', '$sub_event_id', '$name')";
+                    $sql = "INSERT INTO `ieee_event_gallery` (`main_event_id`, `sub_event_id`, `sub_event_image`) VALUES ('$main_event_id', '$sub_event_id', '$name')";
                     if(!mysqli_query($conn, $sql)){
                       echo '
                         <script>
@@ -586,6 +485,11 @@ if (loggedin()) {
                         </script>
                       ';
                     }else{
+                      echo '
+                      <script>
+                      alert("hkdsal");
+                      </script>
+                      ';
                       $count++; // Number of successfully uploaded file
                     }
                       
@@ -596,12 +500,9 @@ if (loggedin()) {
     header('Location: homePage.php');
     exit;
   }
-
     //$result = mysqli_query($conn, "SELECT `images` FROM $event_gallery, $society_table_name where $event_gallery.`event_id` = '$society_table_name.`event_id`'"  );
   //header('Location: homePage.php');
-
   }
-
 }
 ?>
 
@@ -641,14 +542,12 @@ function delete_sub_event(main_event_id,sub_event_id)
 </script>
 
 <?php
-
 if(loggedin()){
   
     if(isset($_GET['delete_main_event_id']) && isset($_GET['delete_sub_event_id']))
   {
        $delete_main_event_id = $_GET['delete_main_event_id'];
        $delete_sub_event_id = $_GET['delete_sub_event_id'];
-
         $delete_sub_event_query_1 = "DELETE FROM `$society_sub_event_table_name` WHERE `main_event_id` = '$delete_main_event_id' and `sub_event_id` = '$delete_sub_event_id'";
         $delete_sub_event_query_2 = "DELETE FROM `$event_gallery` where `main_event_id` = '$delete_main_event_id' and `sub_event_id` = '$delete_sub_event_id'";
         $help_query = "select `curr_no_of_sub_events` from $society_table_name where `event_id` = '$delete_main_event_id' ";
@@ -692,7 +591,6 @@ function delete_main_event(main_event_id)
 </script>
 
 <?php
-
 if(loggedin()){
   
     if(isset($_GET['delete_MAIN_event_id']))
@@ -734,12 +632,9 @@ if(loggedin()){
     <?php
     if (!loggedin()) {
       echo '<a onclick="document.getElementById(`id01`).style.display=`block`" class="w3-bar-item w3-button w3-hover-white">Society Coordinator Login</a>';
-
     }else{
       echo '<a onclick="document.getElementById(`ADD_EVENT`).style.display=`block`" class="w3-bar-item w3-button w3-hover-white">Add new event</a>';
       echo '<a onclick="document.getElementById(`ADD_SUB_EVENT`).style.display=`block`" class="w3-bar-item w3-button w3-hover-white">Add new sub - event</a>';
-
-
      echo '<a href="logout.php" class="w3-bar-item w3-button w3-hover-white">Logout</a>';
     }
     ?>  
@@ -817,11 +712,8 @@ if(loggedin()){
           <label><b>Event Report:</b></label>
           <textarea id="report_text" cols="59.9%" rows="8" name="event_report" placeholder="Enter a brief report of the event" ></textarea><br><br>
 
-          <label><b>Attendance &nbsp&nbsp</b></label>
-          <input type="file" name="event_attendance_image" accept="image/*"><br><br>
-
           <label><b>Event poster &nbsp</b></label>
-          <input type="file" name="poster_image" accept="image/*"><br><br>
+          <input type="file" name="poster_image"><br><br>
 
           <label><b>Event images</b></label>
           <input type="file" name="gallery_images[]" multiple="multiple" accept="image/*"/><br><br>
@@ -853,12 +745,10 @@ if(loggedin()){
               $query = "select `event_name` from $society_table_name";
               $query_run = mysqli_query($conn,$query);
               while ($fetched_row = mysqli_fetch_assoc($query_run)) {
-
                 $BIG_event_name = $fetched_row['event_name'];
                 
                 echo '<option value="'.$BIG_event_name.'">'.$BIG_event_name.'</option>';
               }
-
             ?>
         </select>
         <br><br>
@@ -890,11 +780,8 @@ if(loggedin()){
           <label><b>Event Report:</b></label>
           <textarea id="sub_event_report_text" cols="59.9%" rows="8" name="sub_event_report" placeholder="Enter a brief report of the sub-event" ></textarea><br><br>
 
-          <label><b>Attendance &nbsp&nbsp</b></label>
-          <input type="file" name="sub_event_attendance_image" accept="image/*"><br><br>
-
           <label><b>Event poster &nbsp</b></label>
-          <input type="file" name="sub_event_poster_image" accept="image/*"><br><br>
+          <input type="file" name="sub_event_poster_image"><br><br>
 
           <label><b>Event images</b></label>
           <input type="file" name="sub_event_gallery_images[]" multiple="multiple" accept="image/*"/><br><br>
@@ -934,11 +821,11 @@ if(loggedin()){
     <div class="w3-container" style="margin-top:75px">
       <h1 class="w3-xxxlarge w3-text-red" id = "CCS"><b>Creative Computing Society.</b></h1>
       <hr style="width:50px; border:5px solid red" class="w3-round">
-      <p style="text-align: justify; text-align-last: left;"">The Creative Computing Society of Thapar University, commonly known as CCS, has been founded with the vision of nurturing and fostering the youth generation and creating awareness about the reigning era of technology. The student run committee tirelessly works to achieve it's ambition of bridging the gap between students, computers and technology. A highly active group of people, we organize two major events in a year, namely Chakravyuh and Helix. Apart from that we are operational over the year and various technical and ethical learning workshops on hacking, coding, and ethical learning are conducted by experts of the field. CCS is pledged and devoted to provide a strong rostrum for all the budding and aspiring technocrats of Thapar University, so that they can fulfill our aim to make mankind a developed, prosperous and connect it with the trends of tomorrow.
+      <p>We are a interior design service that focus on what's best for your home and what's best for you!</p>
+      <p style="text-align: justify; text-align-last: left;"">Some text about our services - what we do and what we offer. We are lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+      dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
+      incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
       </p>
-      </div>
-      <?php eventScript($conn, 'ccs', 'CCS','Creative Computing Society, Thapar University','ccs_events','ccs_sub_events','ccs_event_gallery'); ?>
-
       
   
   <!-- Spiritual Scientist Alliance -->
@@ -950,8 +837,8 @@ if(loggedin()){
     dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
     incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     </p>
+    <!--p><b>Our designers are thoughtfully chosen</b>:</p-->
   </div>
-  <?php eventScript($conn, 'ssa', 'SSA','Spiritual Scientist Alliance, Thapar University','ssa_events','ssa_sub_events','ssa_event_gallery'); ?>
 
   <!-- TEDx -->
   <div class="w3-container" id="TEDx" style="margin-top:75px">
@@ -963,9 +850,6 @@ if(loggedin()){
     incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     </p>
   </div>
-  <?php eventScript($conn, 'tedx', 'TEDx','TEDx, Thapar University','tedx_events','tedx_sub_events','tedx_event_gallery'); ?>
-
-
   <!-- IEEE -->
   <div class="w3-container" id="IEEE" style="margin-top:75px">
     <h1 class="w3-xxxlarge w3-text-red"><b>IEEE.</b></h1>
@@ -976,7 +860,172 @@ if(loggedin()){
                 incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     </p>
   </div>
-      <?php eventScript($conn, 'ieee', 'IEEE','IEEE Student Chapter, Thapar University','ieee_events','ieee_sub_events','ieee_event_gallery'); ?>
+  <ul>
+        <br><li style="cursor: pointer;" onclick="toggle('2k17')"><h5>Events: 2k17</h5></li><br>
+        <ul id="2k17" style="display: none;">
+          <?php
+          $display_query = "select * from `ieee_events` where `event_year` = '2017' ORDER BY `event_id` DESC";
+          $display_query_run = mysqli_query($conn,$display_query);
+            while ($row = mysqli_fetch_assoc($display_query_run)){
+              if ($row['curr_no_of_sub_events'] > 0) {
+                
+                  $main_event_id = $row['event_id'];
+               
+                  echo '<li style="cursor: pointer;" onclick="toggle(`Event_'.$main_event_id.'_2k17`)">'.$row['event_name'].'';
+                    echo '<ul>';
+                          $display_sub_event_query = "select * from `ieee_sub_events` where `main_event_id` = '$main_event_id' ORDER BY `sub_event_id` DESC ";
+                          $display_sub_event_query_run = mysqli_query($conn,$display_sub_event_query);
+                          while ($row_sub_event = mysqli_fetch_assoc($display_sub_event_query_run)) {
+                        $sub_event_id = $row_sub_event['sub_event_id'];
+                        $sub_event_name = $row_sub_event['sub_event_name'];
+                        
+                        $society_table_name = 'ieee_events';
+                        $society_sub_event_table_name = 'ieee_sub_events';
+                        $society_event_gallery_table_name = 'ieee_event_gallery';
+                          echo '<li id = "subList'.$main_event_id.'-'.$sub_event_id.'" style="cursor: pointer; width: 50%" onclick="toggle(`Event_sub_event_'.$main_event_id.'-'.$sub_event_id.'_2k17`)">'.$sub_event_name.'</li><span id = "subSpan'.$main_event_id.'-'.$sub_event_id.'" style="display: inline-block; width: 40%"></span><a id = "subA'.$main_event_id.'-'.$sub_event_id.'" href="javascript: delete_sub_event('.$main_event_id.','.$sub_event_id.')" class="close" style = "color: red; text-decoration:none; display: inline-block; width: 3px; height: 3px;" title="Delete main event and corresponding sub-events">&times;</a>';
+                          echo '<div id="Event_sub_event_'.$main_event_id.'-'.$sub_event_id.'_2k17" style="display: none;">';
+                          echo '<h4><b>'.$sub_event_name.'</b></h4>';
+                  
+                  
+                  ?>
+                  
+                  <p style="white-space: pre-wrap;
+                  text-align: justify;
+                  text-align-last: left;">
+                  <b>IEEE Student Chapter, Thapar University</b>
+  <b>IEEE Event :           </b> <?php echo $row_sub_event['sub_event_name'];?>
+  <?php
+                    if($row_sub_event['sub_event_date'] != NULL) {echo '<br><b>Date :                     </b>';        echo $row_sub_event['sub_event_date'];}          
+                    if($row_sub_event['sub_event_venue'] != NULL){echo '<br><b>Venue :                  </b>';        echo $row_sub_event['sub_event_venue'];}
+                    if($row_sub_event['sub_event_time'] != NULL){echo '<br><b>Time :                     </b>';       echo $row_sub_event['sub_event_time'];}
+                    if($row_sub_event['sub_event_no_of_students'] != NULL){echo '<br><b>No. of students : </b>';        echo $row_sub_event['sub_event_no_of_students'];}
+                    echo '<br><b>Facebook Link :   </b>';    echo '<a href="https://www.facebook.com/ieee.thapar/" style="color: blue;">facebook/ieee</a>';
+                    if($row_sub_event['sub_event_speaker'] != NULL){echo '<br><b>Speaker :               </b>';        echo $row_sub_event['sub_event_speaker'].'<br>';}
+                    if($row_sub_event['sub_event_brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $row_sub_event['sub_event_brief_bio'];}
+                    if($row_sub_event['sub_event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="IEEE/uploads/posters/main_events/'.$row_sub_event['sub_event_poster'].'"><br>';}
+                    if($row_sub_event['sub_event_report'] != NULL) {echo '<br><br><b>Report : </b>';        echo $row_sub_event['sub_event_report'];}
+                      echo '</p>';
+                    echo '
+                    <div class="row">
+                      <div class="column">';
+                      $this_sub_event_query = "select `sub_event_image` from `ieee_event_gallery` where `main_event_id` = '$main_event_id' and `sub_event_id` = '$sub_event_id'";
+                      $this_sub_event_query_run = mysqli_query($conn,$this_sub_event_query);
+                      $count_sub_event = 1;
+                      $this_sub_event_query_num_rows = mysqli_num_rows($this_sub_event_query_run);
+                      if($this_sub_event_query_num_rows != 0){
+                        
+                        while ($row_sub_event_gallery = mysqli_fetch_assoc($this_sub_event_query_run)) {
+                          $sub_event_gallery_image = $row_sub_event_gallery['sub_event_image'];
+                          if($count_sub_event == 1){
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$sub_event_gallery_image.'" rel="lightbox[IEEE-event-'.$main_event_id.'-'.$sub_event_id.']" style="text-decoration: none;"> <b><h5>Sub Event Gallery</b></h5> </a>';
+                          $count_sub_event++;
+                          }
+                          else{
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$sub_event_gallery_image.'" rel="lightbox[IEEE-event-'.$main_event_id.'-'.$sub_event_id.']"></a>';
+                          $count_sub_event++;
+                          }
+                        
+                        }
+                      }
+                    echo '</div>
+                        </div>
+                      </div>';
+                        if (!loggedin()) {
+                          echo '
+                        <script>
+                        document.getElementById("subSpan'.$main_event_id.'-'.$sub_event_id.'").style.display = "none";
+                        document.getElementById("subA'.$main_event_id.'-'.$sub_event_id.'").style.display = "none";
+                        </script>
+                        ';
+                        }else{
+                          echo '
+                        <script>
+                        document.getElementById("subList'.$main_event_id.'-'.$sub_event_id.'").style.display = "inline-block";
+                        </script>
+                        ';
+                        }
+                      }
+                      
+                    echo '</ul>';
+                    
+                      echo '</li>';
+              }else{
+                  $main_event_id = $row['event_id'];
+                  $main_event_name = $row['event_name'];
+  
+                
+                
+                  echo '<li id = "subList'.$main_event_id.'" style="cursor: pointer; width: 50%" onclick="toggle(`Event_'.$main_event_id.'_2k17`)">'.$main_event_name.'</li><span id = "subSpan'.$main_event_id.'" style="display: inline-block; width: 40%"></span><a id = "subA'.$main_event_id.'" href="javascript: delete_main_event('.$main_event_id.')" class="close" style = "color: red; text-decoration:none; display: inline-block; width: 3px; height: 3px;" title="Delete main event and corresponding sub-events">&times;</a>';
+                  echo '<div id="Event_'.$main_event_id.'_2k17" style="display: none;">';
+                  echo '<h4><b>'.$main_event_name.'</b></h4>';
+                  
+                  ?>
+                  <p style="white-space: pre-wrap;
+                  text-align: justify;
+                  text-align-last: left;">
+                  <b>IEEE Student Chapter, Thapar University</b>
+  <b>IEEE Event :           </b> <?php echo $row['event_name'];?>
+  <?php
+                    if($row['event_date'] != NULL) {echo '<br><b>Date :                     </b>';        echo $row['event_date'];}          
+                    if($row['event_venue'] != NULL){echo '<br><b>Venue :                  </b>';        echo $row['event_venue'];}
+                    if($row['event_time'] != NULL){echo '<br><b>Time :                     </b>';       echo $row['event_time'];}
+                    if($row['no_of_students'] != NULL){echo '<br><b>No. of students : </b>';        echo $row['no_of_students'];}
+                    echo '<br><b>Facebook Link :   </b>';    echo '<a href="https://www.facebook.com/ieee.thapar/" style="color: blue;">facebook/ieee</a>';
+                    if($row['event_speaker'] != NULL){echo '<br><b>Speaker :               </b>';        echo $row['event_speaker'].'<br>';}
+                    if($row['brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $row['brief_bio'];}
+                    if($row['event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="IEEE/uploads/posters/main_events/'.$row['event_poster'].'"><br>';}
+                    if($row['event_report'] != NULL) {echo '<br><br><b>Report : </b>';        echo $row['event_report'];}
+                      echo '</p>';
+                    echo '
+                    <div class="row">
+                      <div class="column">';
+                      $this_query = "select `main_event_image` from `ieee_event_gallery` where `main_event_id` = '$main_event_id'";
+                      $this_query_run = mysqli_query($conn,$this_query);
+                      $count = 1;
+                      $this_query_num_rows = mysqli_num_rows($this_query_run);
+                      if($this_query_num_rows != 0){
+                        while ($row_gallery = mysqli_fetch_assoc($this_query_run)) {
+                          $gallery_image = $row_gallery['main_event_image'];
+                          if($count == 1){
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox[IEEE-event-'.$main_event_id.']" style="text-decoration: none;"> <b><h5>Event Gallery</b></h5> </a>';
+                          $count++;
+                          }
+                          else{
+                          echo '<a href="IEEE/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox[IEEE-event-'.$main_event_id.']"></a>';
+                          $count++;
+                          }
+                        
+                        }
+                      }
+                    echo '</div>
+                        </div>
+                      </div>';
+                      
+                      $count = 0;
+                      }
+                      if (!loggedin()) {
+                          echo '
+                        <script>
+                        document.getElementById("subSpan'.$main_event_id.'").style.display = "none";
+                        document.getElementById("subA'.$main_event_id.'").style.display = "none";
+                        </script>
+                        ';
+                        }else{
+                          echo '
+                        <script>
+                        document.getElementById("subList'.$main_event_id.'").style.display = "inline-block";
+                        </script>
+                        ';
+                        }
+                }
+                         
+                  echo   '</ul>';
+        ?>
+        
+        <!--li><a href="#" style="text-decoration: none;"><h5>Events: 2k16</h5></a></li><br>
+        <li><a href="#" style="text-decoration: none;"><h5>Events: 2k15</h5></a></li-->
+      </ul>
+    </div>
 
   <!-- MSC -->
   <div class="w3-container" id="MSC" style="margin-top:75px">
@@ -987,66 +1036,8 @@ if(loggedin()){
     dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
     incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     </p>
+    <!--p><b>Our designers are thoughtfully chosen</b>:</p-->
   </div>
-  <?php eventScript($conn, 'msc', 'MSC','Microsoft Student Chapter, Thapar University','msc_events','msc_sub_events','msc_event_gallery'); ?>
-
-  <!-- LUGTU -->
-  <div class="w3-container" id="LUGTU" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Linux User Group.</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
-    <p>The best team in the world.</p>
-    <p style="text-align: justify; text-align-last: left;"">We are lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-    incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    </p>
-  </div>
-  <?php eventScript($conn, 'lugtu', 'LUGTU','Linux User Group, Thapar University','lugtu_events','lugtu_sub_events','lugtu_event_gallery'); ?>
-
-  <!-- OWASP -->
-  <div class="w3-container" id="OWASP" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>OWASP.</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
-    <p>The best team in the world.</p>
-    <p style="text-align: justify; text-align-last: left;"">We are lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-    incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    </p>
-  </div>
-  <?php eventScript($conn, 'owasp', 'OWASP','OWASP Student Chapter, Thapar University','owasp_events','owasp_sub_events','owasp_event_gallery'); ?>
-
-  <!-- The Team -->
-  <!--div class="w3-row-padding w3-grayscale">
-    <div class="w3-col m4 w3-margin-bottom">
-      <div class="w3-light-grey">
-        <img src="/w3images/team2.jpg" alt="John" style="width:100%">
-        <div class="w3-container">
-          <h3>John Doe</h3>
-          <p class="w3-opacity">CEO & Founder</p>
-          <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-        </div>
-      </div>
-    </div>
-    <div class="w3-col m4 w3-margin-bottom">
-      <div class="w3-light-grey">
-        <img src="/w3images/team1.jpg" alt="Jane" style="width:100%">
-        <div class="w3-container">
-          <h3>Jane Doe</h3>
-          <p class="w3-opacity">Designer</p>
-          <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-        </div>
-      </div>
-    </div>
-    <div class="w3-col m4 w3-margin-bottom">
-      <div class="w3-light-grey">
-        <img src="/w3images/team3.jpg" alt="Mike" style="width:100%">
-        <div class="w3-container">
-          <h3>Mike Ross</h3>
-          <p class="w3-opacity">Architect</p>
-          <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-        </div>
-      </div>
-    </div>
-  </div-->
   
   <!-- Contact -->
   <div class="w3-container" id="contact" style="margin-top:75px">
@@ -1069,35 +1060,28 @@ if(loggedin()){
       <button type="submit" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom">Send Message</button>
     </form>  
   </div>
-
 <!-- End page content -->
 </div>
-
 <script>
 // Script to open and close sidebar
 function w3_open() {
     document.getElementById("mySidebar").style.display = "block";
     document.getElementById("myOverlay").style.display = "block";
 }
-
 function w3_close() {
     document.getElementById("mySidebar").style.display = "none";
     document.getElementById("myOverlay").style.display = "none";
 }
-
 // Get the Login Form modal
 var modal_1 = document.getElementById('id01');
-
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
     if (event.target == modal_1) {
         modal_1.style.display = "none";
     }
 }
-
 // Get the ADD_EVENT Form modal
 var modal_2 = document.getElementById('ADD_EVENT');
-
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
   if (event.target == modal_2) {
@@ -1111,7 +1095,6 @@ window.onclick = function(event) {
   //var captionText = document.getElementById("caption");
   //captionText.innerHTML = element.alt;
 //}
-
 function toggle(temp) {
     var x = document.getElementById(temp);
     if (x.style.display === 'none') {
@@ -1120,12 +1103,10 @@ function toggle(temp) {
         x.style.display = 'none';
     }
 }
-
 function mess(){
   alert("The event has been successfully added!");
   return true;
 }
-
 lightbox.option({
       'fitImagesInViewport': true,
       'wrapAround': false,
