@@ -96,13 +96,39 @@ echo '<div>';
                     if($row_sub_event['sub_event_brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $row_sub_event['sub_event_brief_bio'];}
                     if($row_sub_event['sub_event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="SOCIETIES DATA/'.$society_CAPS.'/uploads/posters/main_events/'.$row_sub_event['sub_event_poster'].'"><br>';}
                     if($row_sub_event['sub_event_report'] != NULL) {echo '<br><br><b>Report : </b>';        echo $row_sub_event['sub_event_report'];}
-                    if($row_sub_event['sub_event_attendance'] != NULL) {echo '<br><br><a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/attendance/sub_events/'.$row_sub_event['sub_event_attendance'].'" rel = "lightbox" style="text-decoration: none; border: solid; padding: 4px;"><b>Event Attendance</b></a><br>';}	
-                      echo '</p>';
+
+
+                    echo '
+                      <div class="row">
+                        <div class="column">';
+                        $this_sub_event_query = "select `sub_event_attendance_image` from `$society_event_gallery_table_name` where `main_event_id` = '$main_event_id' and `sub_event_id` = '$sub_event_id' and `sub_event_attendance_image` IS NOT NULL";
+                        $this_sub_event_query_run = mysqli_query($conn,$this_sub_event_query);
+                        $count_sub_event_attendance = 1;
+                        $this_sub_event_query_num_rows = mysqli_num_rows($this_sub_event_query_run);
+
+                        if($this_sub_event_query_num_rows != 0){
+                          
+                          while ($row_sub_event_attendance = mysqli_fetch_assoc($this_sub_event_query_run)) {
+                            $sub_event_attendance_image = $row_sub_event_attendance['sub_event_attendance_image'];
+                            if($count_sub_event_attendance == 1){
+                            echo '<br><a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/attendance/sub_events/'.$sub_event_attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.'-'.$sub_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"> <b>Sub Event Attendance</b></a><br><br>';
+                            $count_sub_event_attendance++;
+                            }
+                            else{
+                            echo '<a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/attendance/sub_events/'.$sub_event_attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.'-'.$sub_event_id.']"></a>';
+                            $count_sub_event_attendance++;
+                            }
+                          
+                          }
+                        }
+                    echo '</div>
+                        </div>';
+
 
                     echo '
                     <div class="row">
                       <div class="column">';
-                      $this_sub_event_query = "select `sub_event_image` from `$society_event_gallery_table_name` where `main_event_id` = '$main_event_id' and `sub_event_id` = '$sub_event_id'";
+                      $this_sub_event_query = "select `sub_event_image` from `$society_event_gallery_table_name` where `main_event_id` = '$main_event_id' and `sub_event_id` = '$sub_event_id' and `sub_event_image` IS NOT NULL";
                       $this_sub_event_query_run = mysqli_query($conn,$this_sub_event_query);
                       $count_sub_event = 1;
                       $this_sub_event_query_num_rows = mysqli_num_rows($this_sub_event_query_run);
@@ -112,11 +138,11 @@ echo '<div>';
                         while ($row_sub_event_gallery = mysqli_fetch_assoc($this_sub_event_query_run)) {
                           $sub_event_gallery_image = $row_sub_event_gallery['sub_event_image'];
                           if($count_sub_event == 1){
-                          echo '<br><a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/gallery/main_events/'.$sub_event_gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.'-'.$sub_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"> <b>Sub Event Gallery</b></a><br><br>';
+                          echo '<br><a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/gallery/sub_events/'.$sub_event_gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.'-'.$sub_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"> <b>Sub Event Gallery</b></a><br><br>';
                           $count_sub_event++;
                           }
                           else{
-                          echo '<a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/gallery/main_events/'.$sub_event_gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.'-'.$sub_event_id.']"></a>';
+                          echo '<a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/gallery/sub_events/'.$sub_event_gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.'-'.$sub_event_id.']"></a>';
                           $count_sub_event++;
                           }
                         
@@ -150,10 +176,10 @@ echo '<div>';
 
 			          	else{
 			          		
-			          		$main_event_id = $event_row['event_id'];
+			          		    $main_event_id = $event_row['event_id'];
                   			$main_event_name = $event_row['event_name'];
 
-                  			echo '<li id = "subList'.$main_event_id.'" style="cursor: pointer; width: 100%" onclick="toggle(`Event_'.$main_event_id.'_'.$year.'`)">'.$main_event_name.'<span id = "subSpan'.$main_event_id.'" style="position: relative; margin-left: 40px;"></span><a id = "subA'.$main_event_id.'" href="javascript: delete_main_event('.$main_event_id.')" class="close" style = "color: red; text-decoration:none; display: inline-block; width: 3px; height: 3px;" title="Delete main event and corresponding sub-events">&times;</a></li>';
+                  			echo '<li id = "subList'.$main_event_id.'" style="cursor: pointer; width: 100%" onclick="toggle(`Event_'.$main_event_id.'_'.$year.'`)">'.$main_event_name.'<span id = "subSpan'.$main_event_id.'_'.$year.'" style="position: relative; margin-left: 40px;"></span><a id = "subA'.$main_event_id.'_'.$year.'" href="javascript: delete_main_event('.$main_event_id.')" class="close" style = "color: red; text-decoration:none; display: inline-block; width: 3px; height: 3px;" title="Delete main event and corresponding sub-events">&times;</a></li>';
 
                   			echo '<div id="Event_'.$main_event_id.'_'.$year.'" style="display: none;">';
 
@@ -176,13 +202,37 @@ echo '<div>';
                     if($event_row['brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $event_row['brief_bio'];}
                     if($event_row['event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="SOCIETIES DATA/'.$society_CAPS.'/uploads/posters/main_events/'.$event_row['event_poster'].'"><br>';}
                     if($event_row['event_report'] != NULL) {echo '<br><br><b>Report : </b>';        echo $event_row['event_report'];}
-                    if($event_row['event_attendance'] != NULL) {echo '<br><br><a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/attendance/main_events/'.$event_row['event_attendance'].'" rel = "lightbox" style="text-decoration: none; border: solid; padding: 4px;"><b>Event Attendance</b></a><br>';}	
+                    
                       echo '</p>';
+
+                    echo '
+                      <div class="row">
+                        <div class="column">';
+                        $this_query = "select `main_event_attendance_image` from `$society_event_gallery_table_name` where `main_event_id` = '$main_event_id' and `main_event_attendance_image` IS NOT NULL";
+                        $this_query_run = mysqli_query($conn,$this_query);
+                        $count_attendance = 1;
+                        $this_query_num_rows = mysqli_num_rows($this_query_run);
+                        if($this_query_num_rows != 0){
+                          while ($row_attendance = mysqli_fetch_assoc($this_query_run)) {
+                            $attendance_image = $row_attendance['main_event_attendance_image'];
+                            if($count_attendance == 1){
+                            echo '<br><a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/attendance/main_events/'.$attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"><b>Event Attendance</b></a><br><br>';
+                            $count_attendance++;
+                            }
+                            else{
+                            echo '<a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/attendance/main_events/'.$attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.']"></a>';
+                            $count_attendance++;
+                            }
+                          
+                          }
+                        }
+                    echo '</div>
+                        </div>';
 
                     echo '
                     <div class="row">
                       <div class="column">';
-                      $this_query = "select `main_event_image` from `$society_event_gallery_table_name` where `main_event_id` = '$main_event_id'";
+                      $this_query = "select `main_event_image` from `$society_event_gallery_table_name` where `main_event_id` = '$main_event_id' and `main_event_image` IS NOT NULL";
                       $this_query_run = mysqli_query($conn,$this_query);
                       $count = 1;
                       $this_query_num_rows = mysqli_num_rows($this_query_run);
@@ -211,15 +261,15 @@ echo '<div>';
 								if (!loggedin()) {
 						                          echo '
 						                        <script>
-						                        document.getElementById("subSpan'.$main_event_id.'").style.display = "none";
-						                        document.getElementById("subA'.$main_event_id.'").style.display = "none";
+  						                        document.getElementById("subSpan'.$main_event_id.'_'.$year.'").style.display = "none";
+  						                        document.getElementById("subA'.$main_event_id.'_'.$year.'").style.display = "none";
 						                        </script>
 						                        ';
 						                        }
 						                        else{
 						                          echo '
-						                        <script>
-						                        document.getElementById("subList'.$main_event_id.'").style.display = "list-item";
+  					                        <script>
+  					                          document.getElementById("subList'.$main_event_id.'_'.$year.'").style.display = "list-item";
 						                        </script>
 						                        ';
 						                        }

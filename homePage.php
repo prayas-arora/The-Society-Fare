@@ -148,39 +148,9 @@ if (loggedin()) {
       //Processing Images
       $msg = "";
 
-      //ATTENDANCE & POSTER  
+      //POSTER  
         $max_file_size = 1024*1024*10; //10 mb
-
-        $attendance_image_name = NULL;
-
-        if (@$_FILES['event_attendance_image']['name']) {
-        $attendance_image_name = @$_FILES['event_attendance_image']['name'];
-        $attendance_image_size = @$_FILES['event_attendance_image']['size'];
-        $attendance_image_type = @$_FILES['event_attendance_image']['type'];
-        $attendance_image_tmp_name = @$_FILES['event_attendance_image']['tmp_name'];
-        $extension = strtolower(substr($attendance_image_name, strrpos($attendance_image_name,'.') + 1));
-
-        if (isset($attendance_image_name)) {
-          if(!empty($attendance_image_name)){
-            if (($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') && ($type = 'image/*') && ($attendance_image_size < $max_file_size)) {
-              $location = 'SOCIETIES DATA/'.$society_name_CAPS.'/uploads/attendance/main_events/';
-
-              if(move_uploaded_file($attendance_image_tmp_name, $location.$attendance_image_name)){}
-              else{
-                echo '
-                    <script>
-                      alert("There was an error uploading attendance");
-                    </script>
-                ';
-              }
-            }
-            else{
-              echo "Attendance image must be jpg/jpeg/png and 10mb or less";
-            }
-          }
-        }
-      }
-
+        $poster_name = NULL;
         if (@$_FILES['poster_image']['name']) {
         $poster_name = @$_FILES['poster_image']['name'];
         $poster_size = @$_FILES['poster_image']['size'];
@@ -196,72 +166,77 @@ if (loggedin()) {
               if(move_uploaded_file($poster_tmp_name, $location.$poster_name)){}
               else{
                 echo '
-                    <script>
-                      alert("There was an error uploading poster");
-                    </script>
+                  <script>
+                    alert("There was an error in uploading POSTER. Redirecting... \nRemove the incorrect event and try again later!");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
                 ';
               }
             }
             else{
-              echo "Poster must be jpg/jpeg/png and 10mb or less";
+              echo '
+                  <script>
+                    alert("Poster must be jpg/jpeg/png and 10mb or less. Redirecting... \nRemove the incorrect event and try again later!");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
             }
           }
         }
       }
 
-      $query = "INSERT INTO $society_table_name (`event_id`, `event_name`, `event_date`, `event_time`, `event_year`, `event_venue`, `no_of_students`, `event_speaker`, `event_attendance`, `event_poster`, `brief_bio`, `event_report`) VALUES ('', '$event_name', '$event_date', '$event_time', '$event_year', '$event_venue', '$no_of_students', '$event_speaker', '$attendance_image_name', '$poster_name', '$event_bio', '$event_report')";
+      $query = "INSERT INTO $society_table_name (`event_id`, `event_name`, `event_date`, `event_time`, `event_year`, `event_venue`, `no_of_students`, `event_speaker`, `event_poster`, `brief_bio`, `event_report`) VALUES ('', '$event_name', '$event_date', '$event_time', '$event_year', '$event_venue', '$no_of_students', '$event_speaker', '$poster_name', '$event_bio', '$event_report')";
     
     
       if (mysqli_query($conn,$query)) {}
         else{
-        echo '
-          <script>
-            alert("Insert query failed!");
-          </script>
-        ';
-        header('Location: homePage.php');
-              exit;
+            echo '
+                  <script>
+                    alert("Insert query failed!. Redirecting... \nRemove the incorrect event and try again later!");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
       }
 
         
   // GALLERY Images
-        $valid_formats = array("jpg", "jpeg", "png", "gif", "zip", "bmp");
+        $valid_formats = array("jpg", "jpeg", "png", "gif", "zip", "bmp", "JPG", "JPEG", "PNG", "GIF", "ZIP", "BMP");
         $path = "SOCIETIES DATA/".$society_name_CAPS."/uploads/gallery/main_events/"; // Upload directory
-        $count = 0;
+        $count_gallery = 0;
+        $error = 0;
 
         foreach ($_FILES['gallery_images']['name'] as $f => $name) {    
           if ($_FILES['gallery_images']['error'][$f] == 4) {
+              $error = 1;
               echo '
               <script>
-              alert("There was an error in inserting gallery images. Redirecting...");
+              alert("There was an error in inserting gallery images. Redirecting... \nRemove the incorrect event and try again later!");
+              setTimeout(`window.location="homePage.php"`,1);
               </script>
             ';
-              header('Location: homePage.php');
-              exit;
               //continue; // Skip file if any error found
           }
           if ($_FILES['gallery_images']['error'][$f] == 0) {             
               if ($_FILES['gallery_images']['size'][$f] > $max_file_size) {
                   $message[] = "$name is too large!.";
-                  echo '
-                    <script>
-                    alert("'.$name.' is too large");
-                    </script>
-                  ';
-                  header('Location: homePage.php');
-                  exit;
+                  $error = 1;
+                 echo '
+                  <script>
+                    alert("'.$name.' is too large!. \nRemove the incorrect event and proceed with smaller image");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
                   //continue; // Skip large files
               }
           elseif( ! in_array(pathinfo($name, PATHINFO_EXTENSION), $valid_formats) ){
-          
+            $error = 1;
             $message[] = "$name is not a valid format";
             echo '
               <script>
-              alert("'.$name.' is not a valid format");
+              alert("'.$name.' is not a valid format! \nRemove the incorrect event and proceed with valid format images i.e. jpg, jpeg, png, gif, zip, bmp");
+              setTimeout(`window.location="homePage.php"`,1);
               </script>
             ';
-            header('Location: homePage.php');
-            exit;
             //continue; // Skip invalid file formats
           }
               else{ // No error found! Move uploaded files
@@ -272,29 +247,132 @@ if (loggedin()) {
                       if ($row = mysqli_fetch_assoc($query_run)) {
                         $event_id = $row['event_id'];
                       }else{
+                        $error = 1;
                         echo '
-                          <script>
-                          alert("There was an error in uploading gallery images");
-                          </script>
+                        <script>
+                          alert("There was an error in uploading gallery images. Contact developer. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
+                        </script>
                         ';
                       }
                     }else{
-                      echo '
+                      $error = 1;
+                        echo '
                         <script>
-                        alert("Check your Query");
+                          alert("Contact developer. Check Query. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
                         </script>
-                      ';
+                        ';
                     }
 
                     $sql = "INSERT INTO `$event_gallery` (`main_event_id`, `main_event_image`) VALUES ('$event_id', '$name')";
                     if(!mysqli_query($conn, $sql)){
-                      echo '
+                      $error = 1;
+                        echo '
                         <script>
-                        alert("Check your gallery insertion query");
+                          alert("Contact developer. Check gallery insertion query. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
+                        </script>
+                        ';
+
+                    }else{
+                      $count_gallery++; // Number of successfully uploaded file
+                      
+                    }
+
+                  }
+              }
+          }
+
+      }
+
+        if($error == 1){
+          echo '
+              <script>
+              alert("There was an error in inserting gallery images. Redirecting... \nRemove the incorrect event and try again later!");
+              setTimeout(`window.location="homePage.php"`,1);
+              </script>
+            ';
+        } 
+
+
+        // ATTENDANCE Images
+        //
+        $path = "SOCIETIES DATA/".$society_name_CAPS."/uploads/attendance/main_events/"; // Upload directory
+        $count_attendance = 0;
+        $error = 0;
+        foreach ($_FILES['event_attendance_image']['name'] as $f => $name) {  
+          if ($_FILES['event_attendance_image']['error'][$f] == 4) {
+              $error = 1;
+              echo '
+              <script>
+              alert("There was an error in inserting attendance images. Redirecting... \nRemove the incorrect event and try again later!");
+              setTimeout(`window.location="homePage.php"`,1);
+              </script>
+            ';
+              //continue; // Skip file if any error found
+          }
+          if ($_FILES['event_attendance_image']['error'][$f] == 0) {             
+              if ($_FILES['event_attendance_image']['size'][$f] > $max_file_size) {
+                  $message[] = "$name is too large!.";
+                  $error = 1;
+                 echo '
+                  <script>
+                    alert("'.$name.' is too large!. \nRemove the incorrect event and proceed with smaller image");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
+                //continue; // Skip large files
+              }
+
+          elseif( ! in_array(pathinfo($name, PATHINFO_EXTENSION), $valid_formats) ){
+            $error = 1;
+            $message[] = "$name is not a valid format";
+            echo '
+              <script>
+              alert("'.$name.' is not a valid format! \nRemove the incorrect event and proceed with valid format images i.e. jpg, jpeg, png, gif, zip, bmp");
+              setTimeout(`window.location="homePage.php"`,1);
+              </script>
+            ';
+            //continue; // Skip invalid file formats
+          }
+              else{ // No error found! Move uploaded files
+                $event_id = NULL;
+                  if(move_uploaded_file($_FILES["event_attendance_image"]["tmp_name"][$f], $path.$name)){
+                                        $query = "select `event_id` from $society_table_name ORDER BY `event_id` desc LIMIT 1";
+                    if($query_run = mysqli_query($conn,$query)){
+                      if ($row = mysqli_fetch_assoc($query_run)) {
+                        $event_id = $row['event_id'];
+                      }else{
+                        $error = 1;
+                        echo '
+                        <script>
+                          alert("There was an error in uploading attendance images. Contact developer. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
                         </script>
                       ';
+                      }
                     }else{
-                      $count++; // Number of successfully uploaded file
+                      $error = 1;
+                        echo '
+                        <script>
+                          alert("Contact developer. Check Query. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
+                        </script>
+                        ';
+                    }
+
+                    $sql = "INSERT INTO `$event_gallery` (`main_event_id`, `main_event_attendance_image`) VALUES ('$event_id', '$name')";
+                    if(!mysqli_query($conn, $sql)){
+                      $error = 1;
+                        echo '
+                        <script>
+                          alert("Contact developer. Check attendance insertion query. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
+                        </script>
+                        ';
+                    }else{
+                      $count_attendance++; // Number of successfully uploaded file
                       
                     }
 
@@ -302,9 +380,11 @@ if (loggedin()) {
               }
           }
       }
-      header('Location: homePage.php');
-      exit;
-    
+
+        if($error == 0){
+          header('Location: homePage.php');
+          exit; 
+        }       
   }
 
 
@@ -392,38 +472,7 @@ if (loggedin()) {
       //Processing Images
       $msg = "";
 
-        $max_file_size = 1024*1024*10; //10 mb
-
-        //ATTENDANCE IMAGE
-        $sub_event_attendance_image_name = NULL;
-        if ($_FILES['sub_event_poster_image']['name']) {
-        $sub_event_attendance_image_name = @$_FILES['sub_event_attendance_image']['name'];
-        $sub_event_attendance_image_size = @$_FILES['sub_event_attendance_image']['size'];
-        $sub_event_attendance_image_type = @$_FILES['sub_event_attendance_image']['type'];
-        $sub_event_attendance_image_tmp_name = @$_FILES['sub_event_attendance_image']['tmp_name'];
-        $sub_event_extension = strtolower(substr($sub_event_attendance_image_name, strrpos($sub_event_attendance_image_name,'.') + 1));
-
-        if (isset($sub_event_attendance_image_name)) {
-          if(!empty($sub_event_attendance_image_name)){
-            if (($sub_event_extension == 'jpg' || $sub_event_extension == 'jpeg' || $sub_event_extension == 'png') && ($type = 'image/*') && ($sub_event_attendance_image_size < $max_file_size)) {
-              $location = 'SOCIETIES DATA/'.$society_name_CAPS.'/uploads/attendance/sub_events/';
-
-              if(move_uploaded_file($sub_event_attendance_image_tmp_name, $location.$sub_event_attendance_image_name)){}
-              else{
-                echo '
-                    <script>
-                      alert("There was an error uploading sub-event attendance");
-                    </script>
-                ';
-              }
-            }
-            else{
-              echo "Attendance must be jpg/jpeg/png and 10mb or less";
-            }
-          }
-        }
-      }
-        
+        $max_file_size = 1024*1024*10; //10 mb        
 
         //POSTER
         $sub_event_poster_name = NULL;
@@ -442,14 +491,20 @@ if (loggedin()) {
               if(move_uploaded_file($sub_event_poster_tmp_name, $location.$sub_event_poster_name)){}
               else{
                 echo '
-                    <script>
-                      alert("There was an error uploading poster");
-                    </script>
+                  <script>
+                    alert("There was an error uploading poster. Redirecting... \nRemove the incorrect event and try again later!");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
                 ';
               }
             }
             else{
-              echo "Poster must be jpg/jpeg/png and 10mb or less";
+              echo '
+                  <script>
+                    alert("Poster must be jpg/jpeg/png and 10mb or less. Redirecting... \nRemove the incorrect event and try again later!");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
             }
           }
         }
@@ -460,18 +515,20 @@ if (loggedin()) {
 
       if (($query_num_rows = @mysqli_num_rows($sub_event_query_run)) != 1) {
         if($query_num_rows == 0) {
-          echo '
-          <script>
-            alert("No such main event exists!");
-          </script>
-        ';
+            echo '
+                  <script>
+                    alert("No such main event exists!. Redirecting... \nRemove the incorrect event and try again later!");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
         }
         if ($query_num_rows > 1) {
-          echo '
-          <script>
-            alert("Multiple main events of same name exist!");
-          </script>
-        ';
+            echo '
+                  <script>
+                    alert("Multiple main events of same name exist!. Redirecting... \nRemove the incorrect event and try again later!");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
         }
 
       }else{
@@ -481,73 +538,74 @@ if (loggedin()) {
             } 
       } 
       if ($sub_event_id == 0 || $main_event_id == 0) {
-        echo '
-        <script>
-          alert("Please select a main event to which sub-event needs to be added from the list");
-        </script>
-        ';
-        header('Location: homePage.php');
-        exit;
+            echo '
+                  <script>
+                    alert("Please select a main event to which sub-event needs to be added from the list!. Redirecting... \nRemove the incorrect event and try again later!");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
       }
-      $query = "INSERT INTO $society_sub_event_table_name (`main_event_id`, `sub_event_id`, `sub_event_name`, `sub_event_date`, `sub_event_time`, `sub_event_year`, `sub_event_venue`, `sub_event_no_of_students`, `sub_event_speaker`, `sub_event_attendance`, `sub_event_poster`, `sub_event_brief_bio`, `sub_event_report`) VALUES ('$main_event_id', '$sub_event_id', '$sub_event_name', '$sub_event_date', '$sub_event_time', '$sub_event_year', '$sub_event_venue', '$sub_event_no_of_students', '$sub_event_speaker', '$sub_event_attendance_image_name', '$sub_event_poster_name', '$sub_event_bio', '$sub_event_report')";
+      $query = "INSERT INTO $society_sub_event_table_name (`main_event_id`, `sub_event_id`, `sub_event_name`, `sub_event_date`, `sub_event_time`, `sub_event_year`, `sub_event_venue`, `sub_event_no_of_students`, `sub_event_speaker`, `sub_event_poster`, `sub_event_brief_bio`, `sub_event_report`) VALUES ('$main_event_id', '$sub_event_id', '$sub_event_name', '$sub_event_date', '$sub_event_time', '$sub_event_year', '$sub_event_venue', '$sub_event_no_of_students', '$sub_event_speaker', '$sub_event_poster_name', '$sub_event_bio', '$sub_event_report')";
     
       if (mysqli_query($conn,$query)) {
         $another_query = "UPDATE $society_table_name SET `curr_no_of_sub_events` = $sub_event_id where `event_id` = '$main_event_id'";
         if (!mysqli_query($conn,$another_query)) {
-          echo '
-          <script>
-            alert("There was an error in updating the main event table!");
-          </script>
-        ';
+           echo '
+                  <script>
+                    alert("There was an error in updating the main event table!. Redirecting... \nRemove the incorrect event and try again later!");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
         }
       }
         else{
-        echo '
-          <script>
-            alert("There was an error in adding the sub-event!");
-          </script>
-        ';
+           echo '
+                  <script>
+                    alert("There was an error in adding the sub-event!!. Redirecting... \nRemove the incorrect event and try again later!");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
       }
 
         
   // GALLERY Images
-        $valid_formats = array("jpg", "jpeg", "png", "gif", "zip", "bmp");
+        $valid_formats = array("jpg", "jpeg", "png", "gif", "zip", "bmp", "JPG", "JPEG", "PNG", "GIF", "ZIP", "BMP");
         $path = "SOCIETIES DATA/".$society_name_CAPS."/uploads/gallery/sub_events/"; // Upload directory
         $count = 0;
+        $error = 0;
 
         foreach ($_FILES['sub_event_gallery_images']['name'] as $f => $name) {     
           if ($_FILES['sub_event_gallery_images']['error'][$f] == 4) {
-            echo '
+            $error = 1;
+              echo '
               <script>
-              alert("There was an error in inserting gallery images. Redirecting...");
+              alert("There was an error in inserting gallery images. Redirecting... \nRemove the incorrect event and try again later!");
+              setTimeout(`window.location="homePage.php"`,1);
               </script>
             ';
-              header('Location: homePage.php');
-              exit;
               //continue; // Skip file if any error found
           }
           if ($_FILES['sub_event_gallery_images']['error'][$f] == 0) {             
               if ($_FILES['sub_event_gallery_images']['size'][$f] > $max_file_size) {
                   $message[] = "$name is too large!.";
-                  echo '
-                    <script>
-                    alert("'.$name.' is too large");
-                    </script>
-                  ';
-                  header('Location: homePage.php');
-                  exit;
+                  $error = 1;
+                 echo '
+                  <script>
+                    alert("'.$name.' is too large!. \nRemove the incorrect event and proceed with smaller image");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
                   //continue; // Skip large files
               }
           elseif( ! in_array(pathinfo($name, PATHINFO_EXTENSION), $valid_formats) ){
-          
+            $error = 1;
             $message[] = "$name is not a valid format";
             echo '
               <script>
-              alert("'.$name.' is not a valid format");
+              alert("'.$name.' is not a valid format! \nRemove the incorrect event and proceed with valid format images i.e. jpg, jpeg, png, gif, zip, bmp");
+              setTimeout(`window.location="homePage.php"`,1);
               </script>
             ';
-            header('Location: homePage.php');
-            exit;
             //continue; // Skip invalid file formats
           }
               else{ // No error found! Move uploaded files
@@ -563,28 +621,33 @@ if (loggedin()) {
                         $sub_event_id = $row['sub_event_id'];
                       }
                     }else{
+                        $error = 1;
                         echo '
-                          <script>
-                          alert("There was an error in uploading sub-event gallery images");
-                          </script>
+                        <script>
+                          alert("There was an error in uploading gallery images. Contact developer. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
+                        </script>
                         ';
                       }
                     }else{
                       echo '
                         <script>
-                        alert("Sub-event gallery images could not be inserted!");
+                          alert("Contact developer. Check Query. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
                         </script>
-                      ';
+                        ';
                     }
 
 
                     $sql = "INSERT INTO `$event_gallery` (`main_event_id`, `sub_event_id`, `sub_event_image`) VALUES ('$main_event_id', '$sub_event_id', '$name')";
                     if(!mysqli_query($conn, $sql)){
-                      echo '
+                      $error = 1;
+                        echo '
                         <script>
-                        alert("Check your sub_event gallery insertion query");
+                          alert("Contact developer. Check gallery insertion query. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
                         </script>
-                      ';
+                        ';
                     }else{
                       $count++; // Number of successfully uploaded file
                     }
@@ -593,14 +656,114 @@ if (loggedin()) {
               }
           }
       }
-    header('Location: homePage.php');
-    exit;
+
+      if($error == 1){
+          echo '
+              <script>
+              alert("There was an error in inserting gallery images. Redirecting... \nRemove the incorrect event and try again later!");
+              setTimeout(`window.location="homePage.php"`,1);
+              </script>
+            ';
+        } 
+
+      // sub-event ATTENDANCE Images
+
+        $path = "SOCIETIES DATA/".$society_name_CAPS."/uploads/attendance/sub_events/"; // Upload directory
+        $count_sub_event_attendance = 0;
+        $error = 0;
+
+        foreach ($_FILES['sub_event_attendance_image']['name'] as $f => $name) {     
+          if ($_FILES['sub_event_attendance_image']['error'][$f] == 4) {
+            $error = 1;
+              echo '
+              <script>
+              alert("There was an error in inserting attendance images. Redirecting... \nRemove the incorrect event and try again later!");
+              setTimeout(`window.location="homePage.php"`,1);
+              </script>
+            ';
+
+              //continue; // Skip file if any error found
+          }
+          if ($_FILES['sub_event_attendance_image']['error'][$f] == 0) {             
+              if ($_FILES['sub_event_attendance_image']['size'][$f] > $max_file_size) {
+                  $message[] = "$name is too large!.";
+                  $error = 1;
+                 echo '
+                  <script>
+                    alert("'.$name.' is too large!. \nRemove the incorrect event and proceed with smaller image");
+                    setTimeout(`window.location="homePage.php"`,1);
+                  </script>
+                ';
+                  //continue; // Skip large files
+              }
+          elseif( ! in_array(pathinfo($name, PATHINFO_EXTENSION), $valid_formats) ){
+            $error = 1;
+            $message[] = "$name is not a valid format";
+            echo '
+              <script>
+              alert("'.$name.' is not a valid format! \nRemove the incorrect event and proceed with valid format images i.e. jpg, jpeg, png, gif, zip, bmp");
+              setTimeout(`window.location="homePage.php"`,1);
+              </script>
+            ';
+            //continue; // Skip invalid file formats
+          }
+              else{ // No error found! Move uploaded files
+
+                $sub_event_id = NULL;
+                  if(move_uploaded_file($_FILES["sub_event_attendance_image"]["tmp_name"][$f], $path.$name)){
+                    $sql_query = "select `sub_event_id` from $society_sub_event_table_name where `main_event_id` = '$main_event_id' ORDER BY sub_event_id desc LIMIT 1";
+
+                    if($sql_query_run = mysqli_query($conn,$sql_query)){
+                      $query_num_rows = mysqli_num_rows($sql_query_run);
+                      if ($query_num_rows == 1) {
+                      while ($row = mysqli_fetch_assoc($sql_query_run)) {
+                        $sub_event_id = $row['sub_event_id'];
+                      }
+                    }else{
+                      $error = 1;
+                        echo '
+                        <script>
+                          alert("There was an error in uploading attendance images. Contact developer. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
+                        </script>
+                      ';
+                      }
+                    }else{
+                     $error = 1;
+                        echo '
+                        <script>
+                          alert("Contact developer. Check Query. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
+                        </script>
+                        ';
+                    }
+
+
+                    $sql = "INSERT INTO `$event_gallery` (`main_event_id`, `sub_event_id`, `sub_event_attendance_image`) VALUES ('$main_event_id', '$sub_event_id', '$name')";
+                    if(!mysqli_query($conn, $sql)){
+                      $error = 1;
+                        echo '
+                        <script>
+                          alert("Contact developer. Check attendance insertion query. Redirecting... \nRemove the incorrect event and try again later!");
+                          setTimeout(`window.location="homePage.php"`,1);
+                        </script>
+                        ';
+                    }else{
+                      $count_sub_event_attendance++; // Number of successfully uploaded file
+                    }
+                      
+                  }
+              }
+          }
+      }
+        
+    if($error == 0){
+          header('Location: homePage.php');
+          exit; 
+        } 
   }
 
-    //$result = mysqli_query($conn, "SELECT `images` FROM $event_gallery, $society_table_name where $event_gallery.`event_id` = '$society_table_name.`event_id`'"  );
-  //header('Location: homePage.php');
-
-  }
+ }
 
 }
 ?>
@@ -718,7 +881,7 @@ if(loggedin()){
 
 <!-- Sidebar/menu -->
 <nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
-  <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large" style="width:100%;font-size:22px; margin-top: -10%; margin-bottom: 5%">Close Menu</a>
   <div class="w3-container">
     <a class="navbar-brand pull-left visible-sm visible-md visible-lg" target="_blank" href="http://www.thapar.edu/" style="text-decoration: none;">
       <div class="LOGO img-responsive">
@@ -748,7 +911,7 @@ if(loggedin()){
 </nav>
 
 <!-- Top menu on small screens -->
-<header class="w3-container w3-top w3-hide-large w3-red w3-xlarge w3-padding">
+<header class="w3-container w3-hide-large w3-red w3-xlarge w3-padding">
   <a href="javascript:void(0)" class="w3-button w3-red w3-margin-right" onclick="w3_open()">☰</a>
   <span>Thapar University</span>
 </header>
@@ -818,7 +981,7 @@ if(loggedin()){
           <textarea id="report_text" cols="59.9%" rows="8" name="event_report" placeholder="Enter a brief report of the event" ></textarea><br><br>
 
           <label><b>Attendance &nbsp&nbsp</b></label>
-          <input type="file" name="event_attendance_image" accept="image/*"><br><br>
+          <input type="file" name="event_attendance_image[]"  multiple="multiple" accept="image/*"><br><br>
 
           <label><b>Event poster &nbsp</b></label>
           <input type="file" name="poster_image" accept="image/*"><br><br>
@@ -891,7 +1054,7 @@ if(loggedin()){
           <textarea id="sub_event_report_text" cols="59.9%" rows="8" name="sub_event_report" placeholder="Enter a brief report of the sub-event" ></textarea><br><br>
 
           <label><b>Attendance &nbsp&nbsp</b></label>
-          <input type="file" name="sub_event_attendance_image" accept="image/*"><br><br>
+          <input type="file" name="sub_event_attendance_image[]" multiple="multiple" accept="image/*"><br><br>
 
           <label><b>Event poster &nbsp</b></label>
           <input type="file" name="sub_event_poster_image" accept="image/*"><br><br>
@@ -919,15 +1082,32 @@ if(loggedin()){
   
   <!-- Photo grid (modal) -->
   <div class="w3-row-padding">
-    <div class="w3-half">
-      <a href="#CCS" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/CCS/CCS_LOGO.png" style="width:400px;" alt="Creative Computing Society"> </a>
-       <a href="#TEDx" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/TEDx/TEDx-logo.jpg" style="width:100%" alt="TEDx"> </a>
-       <a href="#MSC" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/MSC/logo_msc.png" style="width:400px; height: 400px;" alt="Microsoft Student Chapter"> </a>
+    <div class="w3-third" >
+      <a href="#CCS" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/CCS/CCS_LOGO.png" style="width:100%; height:35%;" alt="Creative Computing Society"> </a>
     </div>
 
-    <div class="w3-half">
-      <a href="#SSA" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/Virsa/LOGO1.jpg" style="width:100%;"  alt="Spiritual Scientist Alliance"> </a>
-      <a href="#IEEE" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/IEEE/IEEE_LOGO.jpg" style="width:300px;" alt="IEEE"> </a>
+    <div class="w3-third">
+      <a href="#IEEE" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/IEEE/IEEE_LOGO.jpg" style="width:60%;" alt="IEEE"> </a>
+    </div>
+
+    <div class="w3-third">
+        <a href="#MSC" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/MSC/logo_msc.png" style="width:100%;" alt="Microsoft Student Chapter"> </a>
+    </div>
+  </div>
+
+  <div class="w3-row-padding">
+    <div class="w3-third">
+       <a href="#TEDx" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/TEDx/TEDx-logo.jpg" style="width:100%;" alt="TEDx"> </a>
+    </div>
+
+    <div class="w3-third">
+        <a href="#SSA" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/SSA/LOGO12.png" style="width:100%;"  alt="Spiritual Scientist Alliance"> </a>
+    </div>
+
+    <div class="w3-third">
+      
+    </div>
+
   </div>
 
   <!-- CCS -->
@@ -988,7 +1168,7 @@ if(loggedin()){
     incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     </p>
   </div>
-  <?php eventScript($conn, 'msc', 'MSC','Microsoft Student Chapter, Thapar University','msc_events','msc_sub_events','msc_event_gallery'); ?>
+      <?php eventScript($conn, 'msc', 'MSC','Microsoft Student Chapter, Thapar University','msc_events','msc_sub_events','msc_event_gallery'); ?>
 
   <!-- LUGTU -->
   <div class="w3-container" id="LUGTU" style="margin-top:75px">
