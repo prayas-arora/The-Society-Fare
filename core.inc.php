@@ -94,7 +94,7 @@ echo '<div>';
                     echo '<br><b>Facebook Link :   </b>';    echo '<a href="https://www.facebook.com/'.$society.'.thapar/" style="color: blue;">facebook/'.$society.'</a>';
                     if($row_sub_event['sub_event_speaker'] != NULL){echo '<br><b>Speaker :               </b>';        echo $row_sub_event['sub_event_speaker'].'<br>';}
                     if($row_sub_event['sub_event_brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $row_sub_event['sub_event_brief_bio'];}
-                    if($row_sub_event['sub_event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="SOCIETIES DATA/'.$society_CAPS.'/uploads/posters/main_events/'.$row_sub_event['sub_event_poster'].'"><br>';}
+                    if($row_sub_event['sub_event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="SOCIETIES DATA/'.$society_CAPS.'/uploads/posters/sub_events/'.$row_sub_event['sub_event_poster'].'"><br>';}
                     if($row_sub_event['sub_event_report'] != NULL) {echo '<br><br><b>Report : </b>';        echo $row_sub_event['sub_event_report'];}
 
 

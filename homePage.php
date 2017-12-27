@@ -6,7 +6,7 @@ if (loggedin()) {
   $lastname = getfield('users','lastname');
 
   
-  echo '<div style="margin-left: 22.5%;"><h5>Hello '.$firstname.' '.$lastname.'</h5></div>';   
+  echo '<div style="margin-left: 22.5%;"><h5 style = "color: #4d4dff;">Hello '.$firstname.' '.$lastname.'</h5></div>';   
 }
 ?>
 
@@ -210,7 +210,7 @@ if (loggedin()) {
               $error = 1;
               echo '
               <script>
-              alert("There was an error in inserting gallery images. Redirecting... \nRemove the incorrect event and try again later!");
+              alert("There was an error in inserting gallery images or no images were selected for event attendance. Redirecting... \nRemove the incorrect event and try again later!");
               setTimeout(`window.location="homePage.php"`,1);
               </script>
             ';
@@ -906,7 +906,7 @@ if(loggedin()){
      echo '<a href="logout.php" class="w3-bar-item w3-button w3-hover-white">Logout</a>';
     }
     ?>  
-    <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">About</a>
+    <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contact</a>
   </div>
 </nav>
 
@@ -924,7 +924,7 @@ if(loggedin()){
   <div id="id01" class="modal">
     <form class = "modal-content animate" action = "<?php echo $current_file; ?>" method = "POST">
       <div class="imgcontainer">
-        <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+        <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close">&times;</span>
         <img src="images/Avatar/admin.png" alt="Avatar" class="avatar">
       </div>
 
@@ -948,7 +948,7 @@ if(loggedin()){
   <div id="ADD_EVENT" class="modal">
     <form class = "modal-content animate" action = "<?php echo $current_file; ?>" method = "POST" enctype="multipart/form-data">
       <div class="imgcontainer">
-        <span onclick="document.getElementById('ADD_EVENT').style.display='none'" class="close" title="Close Modal">&times;</span>
+        <span onclick="document.getElementById('ADD_EVENT').style.display='none'" class="close" title="Close">&times;</span>
       </div>
 
       <div class="container-fluid">
@@ -975,10 +975,10 @@ if(loggedin()){
           <input type="text" placeholder="Enter Speaker Name" name="event_speaker" >
           
           <label><b>Brief Bio:</b></label>
-          <textarea id="bio_text" cols="59.9%" rows="8" name="event_bio" placeholder="Enter a brief bio about the event" ></textarea><br><br>
+          <textarea id="bio_text" cols="69%" rows="8" style="width: 100%; name="event_bio" placeholder="Enter a brief bio of the event" ></textarea><br><br>
 
-          <label><b>Event Report:</b></label>
-          <textarea id="report_text" cols="59.9%" rows="8" name="event_report" placeholder="Enter a brief report of the event" ></textarea><br><br>
+          <label><b>Event Report:</b><br></label>
+          <textarea id="report_text" cols="69%" rows="8" style="width: 100%;" name="event_report" placeholder="Enter a brief report of the event" ></textarea><br><br>
 
           <label><b>Attendance &nbsp&nbsp</b></label>
           <input type="file" name="event_attendance_image[]"  multiple="multiple" accept="image/*"><br><br>
@@ -1002,7 +1002,7 @@ if(loggedin()){
   <div id="ADD_SUB_EVENT" class="modal">
     <form class = "modal-content animate" action = "<?php echo $current_file; ?>" method = "POST" enctype="multipart/form-data">
       <div class="imgcontainer">
-        <span onclick="document.getElementById('ADD_SUB_EVENT').style.display='none'" class="close" title="Close Modal">&times;</span>
+        <span onclick="document.getElementById('ADD_SUB_EVENT').style.display='none'" class="close" title="Close">&times;</span>
       </div>
 
       <div class="container-fluid">
@@ -1048,10 +1048,10 @@ if(loggedin()){
           <input type="text" placeholder="Enter Speaker Name" name="sub_event_speaker">
           
           <label><b>Brief Bio:</b></label>
-          <textarea id="bio_text" cols="59.9%" rows="8" name="sub_event_bio" placeholder="Enter a brief bio about the event" ></textarea><br><br>
+          <textarea id="bio_text" cols="69%" rows="8" style="width: 100%; name="sub_event_bio" placeholder="Enter a brief bio about the event" ></textarea><br><br>
 
           <label><b>Event Report:</b></label>
-          <textarea id="sub_event_report_text" cols="59.9%" rows="8" name="sub_event_report" placeholder="Enter a brief report of the sub-event" ></textarea><br><br>
+          <textarea id="sub_event_report_text" cols="69%" rows="8" style="width: 100%; name="sub_event_report" placeholder="Enter a brief report of the sub-event" ></textarea><br><br>
 
           <label><b>Attendance &nbsp&nbsp</b></label>
           <input type="file" name="sub_event_attendance_image[]" multiple="multiple" accept="image/*"><br><br>
@@ -1227,27 +1227,58 @@ if(loggedin()){
       </div>
     </div>
   </div-->
-  
+
   <!-- Contact -->
   <div class="w3-container" id="contact" style="margin-top:75px">
     <h1 class="w3-xxxlarge w3-text-red"><b>Contact.</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
-    <p>Do you want us to style your home? Fill out the form and fill me in with the details :) We love meeting new people!</p>
-    <form action="/action_page.php" target="_blank">
+    <p>Do you want to contact a society coordinator ? Fill out the form and fill in the details :) We'll deliver your message!</p>
+
+    <form action = "send_email.php" method = "POST" enctype="multipart/form-data">
+
       <div class="w3-section">
-        <label>Name</label>
-        <input class="w3-input w3-border" type="text" name="Name" required>
+        <label><b>Name</b></label>
+        <input class="w3-input w3-border" type="text" name="contact_name" placeholder="Your Name" required>
       </div>
+
       <div class="w3-section">
-        <label>Email</label>
-        <input class="w3-input w3-border" type="text" name="Email" required>
+        <label><b>Email Address</b></label>
+        <input class="w3-input w3-border" type="email" name="sender_email" placeholder="Your email address" required>
       </div>
+
       <div class="w3-section">
-        <label>Message</label>
-        <input class="w3-input w3-border" type="text" name="Message" required>
+        <!--class="w3-input w3-border"-->
+          <label><b>Select society</b></label>
+          <br>
+          
+            <select name="contact_coordinator_id">
+            <option>Select</option>
+            <?php
+              $query = "select  `id`,`firstname`,`lastname`,`society` from `users`";
+              $query_run = mysqli_query($conn,$query);
+              while ($fetched_row = mysqli_fetch_assoc($query_run)) {
+
+                $society_name = $fetched_row['society'];
+                $coordinator_name = "".$fetched_row['firstname']." ".$fetched_row['lastname']."";
+                $id = $fetched_row['id'];
+
+                echo '<option value="'.$id.'">'.$society_name.' ('.$coordinator_name.')';
+              }
+
+            ?>
+            
+        </select>
+        <br><br>
+
+      <div class="w3-section">
+        <label><b>Message</b></label>
+        <input class="w3-input w3-border" type="text" name="contact_message" required>
       </div>
+
       <button type="submit" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom">Send Message</button>
+
     </form>  
+
   </div>
 
 <!-- End page content -->
