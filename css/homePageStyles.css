@@ -3,6 +3,34 @@ body {font-size:16px;}
 .w3-half img{margin-bottom:-6px;margin-top:16px;opacity:0.8;cursor:pointer}
 .w3-half img:hover{opacity:1}
 
+#loading{
+    width: 50px;
+    height: 50px;
+    
+    border: 5px solid #ccc;
+    border-top:5px solid #f25a41;
+    border-radius: 100%;
+    
+    position: fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right: 0;
+    margin-left: 55%;
+    margin-top: 5%;
+
+    animation: spin 2s infinite linear; 
+}
+
+@keyframes spin {
+    from{
+            transform: rotate(0deg);
+        }
+        to{
+            transform: rotate(360deg);
+        }
+} 
+
 /*Login Form*/
 #loginForm input[type=text], input[type=password], textarea {
     width: 100%;

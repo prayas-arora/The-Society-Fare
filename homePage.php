@@ -54,7 +54,7 @@ if (loggedin()) {
   global $society_table_name;
   global $society_sub_event_table_name;
   global $event_gallery;
-  
+   
   if($_SESSION['user_id'] == 1 || $_SESSION['user_id'] == 2){
     $society_name = 'ccs';
     $society_name_CAPS = 'CCS';
@@ -68,6 +68,7 @@ if (loggedin()) {
       $society_table_name = 'ssa_events';
       $society_sub_event_table_name = 'ssa_sub_events';
       $event_gallery = 'ssa_event_gallery';
+      $fb_link="https://www.facebook.com/ssathaparuniversity/";
   }
     if($_SESSION['user_id'] == 5){
       $society_name = 'msc';
@@ -75,27 +76,31 @@ if (loggedin()) {
       $society_table_name = 'msc_events';
       $society_sub_event_table_name = 'msc_sub_events';
       $event_gallery = 'msc_event_gallery';
+      $fb_link="https://www.facebook.com/msc2k17/";
   }
-    if($_SESSION['user_id'] == 6){
+    if($_SESSION['user_id'] == 6 || $_SESSION['user_id'] == 7){
       $society_name = 'owasp';
       $society_name_CAPS = 'OWASP';
       $society_table_name = 'owasp_events';
       $society_sub_event_table_name = 'owasp_sub_events';
       $event_gallery = 'owasp_event_gallery';
+      $fb_link="https://www.facebook.com/owasptsc/";
   }
-    if($_SESSION['user_id'] == 7){
+    if($_SESSION['user_id'] == 8 || $_SESSION['user_id'] == 9){
       $society_name = 'tedx';
       $society_name_CAPS = 'TEDx';
       $society_table_name = 'tedx_events';
       $society_sub_event_table_name = 'tedx_sub_events';
       $event_gallery = 'tedx_event_gallery';
+      $fb_link="https://www.facebook.com/tedxthaparuniversity/";
   }
-    if ($_SESSION['user_id'] == 8){
+    if ($_SESSION['user_id'] == 10){
       $society_name = 'ieee';
       $society_name_CAPS = 'IEEE';
       $society_table_name = 'ieee_events';
       $society_sub_event_table_name = 'ieee_sub_events';
       $event_gallery = 'ieee_event_gallery';
+      $fb_link="https://www.facebook.com/ieee.thapar/";
     }
 
     if (isset($_POST['event_name'])) {
@@ -877,8 +882,8 @@ if(loggedin()){
 ?>
 
 </head>
-<body>
-
+<body onload="hideLoader()">
+<div id="loading"></div>
 <!-- Sidebar/menu -->
 <nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
   <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large" style="width:100%;font-size:22px; margin-top: -10%; margin-bottom: 5%">Close Menu</a>
@@ -975,7 +980,7 @@ if(loggedin()){
           <input type="text" placeholder="Enter Speaker Name" name="event_speaker" >
           
           <label><b>Brief Bio:</b></label>
-          <textarea id="bio_text" cols="69%" rows="8" style="width: 100%; name="event_bio" placeholder="Enter a brief bio of the event" ></textarea><br><br>
+          <textarea id="bio_text" cols="69%" rows="8" style="width: 100%;" name="event_bio" placeholder="Enter a brief bio of the event" ></textarea><br><br>
 
           <label><b>Event Report:</b><br></label>
           <textarea id="report_text" cols="69%" rows="8" style="width: 100%;" name="event_report" placeholder="Enter a brief report of the event" ></textarea><br><br>
@@ -1048,10 +1053,10 @@ if(loggedin()){
           <input type="text" placeholder="Enter Speaker Name" name="sub_event_speaker">
           
           <label><b>Brief Bio:</b></label>
-          <textarea id="bio_text" cols="69%" rows="8" style="width: 100%; name="sub_event_bio" placeholder="Enter a brief bio about the event" ></textarea><br><br>
+          <textarea id="bio_text" cols="69%" rows="8" style="width: 100%;" name="sub_event_bio" placeholder="Enter a brief bio about the event" ></textarea><br><br>
 
           <label><b>Event Report:</b></label>
-          <textarea id="sub_event_report_text" cols="69%" rows="8" style="width: 100%; name="sub_event_report" placeholder="Enter a brief report of the sub-event" ></textarea><br><br>
+          <textarea id="sub_event_report_text" cols="69%" rows="8" style="width: 100%;" name="sub_event_report" placeholder="Enter a brief report of the sub-event" ></textarea><br><br>
 
           <label><b>Attendance &nbsp&nbsp</b></label>
           <input type="file" name="sub_event_attendance_image[]" multiple="multiple" accept="image/*"><br><br>
@@ -1083,11 +1088,11 @@ if(loggedin()){
   <!-- Photo grid (modal) -->
   <div class="w3-row-padding">
     <div class="w3-third" >
-      <a href="#CCS" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/CCS/CCS_LOGO.png" style="width:100%; height:35%;" alt="Creative Computing Society"> </a>
+      <a href="#CCS" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/CCS/CCS_LOGO.png" style="width:110%; height:35%; padding-right: 5%;" alt="Creative Computing Society"> </a>
     </div>
 
     <div class="w3-third">
-      <a href="#IEEE" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/IEEE/IEEE_LOGO.jpg" style="width:60%;" alt="IEEE"> </a>
+      <a href="#TEDx" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/TEDx/tEDx-logo.png" style="padding-top: 30%;  width:100%;" alt="TEDx"> </a>
     </div>
 
     <div class="w3-third">
@@ -1097,15 +1102,15 @@ if(loggedin()){
 
   <div class="w3-row-padding">
     <div class="w3-third">
-       <a href="#TEDx" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/TEDx/TEDx-logo.jpg" style="width:100%;" alt="TEDx"> </a>
+      <a href="#OWASP" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/OWASP/OWASP-logo.png" style="width:75%;"  alt="Open Web Application Security Project"> </a>
     </div>
 
     <div class="w3-third">
-        <a href="#SSA" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/SSA/LOGO12.png" style="width:100%;"  alt="Spiritual Scientist Alliance"> </a>
+        <a href="#IEEE" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/IEEE/IEEE_LOGO.jpg" style="width:60%;" alt="IEEE"> </a>
     </div>
 
     <div class="w3-third">
-      
+        <a href="#SSA" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/SSA/SSA.png" style="width:100%;"  alt="Spiritual Scientist Alliance"> </a>
     </div>
 
   </div>
@@ -1117,7 +1122,7 @@ if(loggedin()){
       <p style="text-align: justify; text-align-last: left;"">The Creative Computing Society of Thapar University, commonly known as CCS, has been founded with the vision of nurturing and fostering the youth generation and creating awareness about the reigning era of technology. The student run committee tirelessly works to achieve it's ambition of bridging the gap between students, computers and technology. A highly active group of people, we organize two major events in a year, namely Chakravyuh and Helix. Apart from that we are operational over the year and various technical and ethical learning workshops on hacking, coding, and ethical learning are conducted by experts of the field. CCS is pledged and devoted to provide a strong rostrum for all the budding and aspiring technocrats of Thapar University, so that they can fulfill our aim to make mankind a developed, prosperous and connect it with the trends of tomorrow.
       </p>
       </div>
-      <?php eventScript($conn, 'ccs', 'CCS','Creative Computing Society, Thapar University','ccs_events','ccs_sub_events','ccs_event_gallery'); ?>
+      <?php eventScript($conn, 'ccs', 'CCS', 'Creative Computing Society, Thapar University', 'ccs_events', 'ccs_sub_events', 'ccs_event_gallery', 'https://www.facebook.com/CCSTU/'); ?>
 
       
   
@@ -1125,25 +1130,25 @@ if(loggedin()){
   <div class="w3-container" id="SSA" style="margin-top:75px">
     <h1 class="w3-xxxlarge w3-text-red"><b>Spiritual Scientist Alliance.</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
-    <p>The best team in the world.</p>
-    <p style="text-align: justify; text-align-last: left;"">We are lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-    incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    <p style="text-align: justify; text-align-last: left;"">SSA – Spiritual Scientist’s Alliance is one of the healthiest functioning societies of Thapar. The official traditional fest of Thapar also known VIRSA – The essence of Punjab was very efficiently organised and managed by this society. The fest commenced with the Musical night on its first day. It comprised the perfect mixture traditional as well as western music. On the second day there was Bhangra wars between various teams, it definitely elated the Punjabi crowd. It was followed was Jalwa - e- virasat, a fashion show with a traditional pinch to encourage and support Indian traditional wears. On the finale day of the fest there was great Punjabi fair within the university premises opened for all its staff and students. There was also a gatka performance in the fest performed by trained experts. There were rides, Dj, Punjabi dhaba various stalls selling numerous  items. The fair witnessed the presence of officials of Thapar and their applause.<br><br>
+
+    Gurpurab is very well known festival for Punjab. Under the presidency of Dr Maninder Singh and General Secretary Bhavneet kaur  SSA organised Gurpurab celebrations for the college students and staff. A sukhmani sahib path was arranged with the campus followed by a customary langar. The students themselves took the various responsibilities like serving the food, washing dishes, taking care of the footwear. It was a treat for the students and the faculties in charge  to be a part of this genuine cause.
+
     </p>
   </div>
-  <?php eventScript($conn, 'ssa', 'SSA','Spiritual Scientist Alliance, Thapar University','ssa_events','ssa_sub_events','ssa_event_gallery'); ?>
+  <?php eventScript($conn, 'ssa', 'SSA', 'Spiritual Scientist Alliance, Thapar University', 'ssa_events', 'ssa_sub_events', 'ssa_event_gallery', 'https://www.facebook.com/ssathaparuniversity/'); ?>
 
   <!-- TEDx -->
   <div class="w3-container" id="TEDx" style="margin-top:75px">
     <h1 class="w3-xxxlarge w3-text-red"><b>TEDx.</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
-    <p>The best team in the world.</p>
-    <p style="text-align: justify; text-align-last: left;"">We are lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-    incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    <p style="text-align: justify; text-align-last: left;"">In the spirit of ideas worth spreading, TEDx is a program of local, self-organized events that bring people together to share a TED-like experience. At a TEDx event, TED Talks video and live speakers combine to spark deep discussion and connection. These local, self-organized events are branded TEDx, where x = independently organized TED event. The TED Conference provides general guidance for the TEDx program, but individual TEDx events are self-organized.<br>
+    (Subject to certain rules and regulations.)<br><br>
+
+    Our event is called TEDxThaparUniversity, where x = independently organized TED event. At our TEDxThaparUniversity event, TEDTalks video and live speakers will combine to spark deep discussion and connection in a small group.
     </p>
   </div>
-  <?php eventScript($conn, 'tedx', 'TEDx','TEDx, Thapar University','tedx_events','tedx_sub_events','tedx_event_gallery'); ?>
+  <?php eventScript($conn, 'tedx', 'TEDx', 'TEDx, Thapar University', 'tedx_events', 'tedx_sub_events', 'tedx_event_gallery', 'https://www.facebook.com/tedxthaparuniversity/'); ?>
 
 
   <!-- IEEE -->
@@ -1156,43 +1161,36 @@ if(loggedin()){
                 incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     </p>
   </div>
-      <?php eventScript($conn, 'ieee', 'IEEE','IEEE Student Chapter, Thapar University','ieee_events','ieee_sub_events','ieee_event_gallery'); ?>
+      <?php eventScript($conn, 'ieee', 'IEEE', 'IEEE Student Chapter, Thapar University', 'ieee_events', 'ieee_sub_events', 'ieee_event_gallery', 'https://www.facebook.com/ieee.thapar/'); ?>
 
   <!-- MSC -->
   <div class="w3-container" id="MSC" style="margin-top:75px">
     <h1 class="w3-xxxlarge w3-text-red"><b>Microsoft Student Chapter.</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
-    <p>The best team in the world.</p>
-    <p style="text-align: justify; text-align-last: left;"">We are lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-    incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    <p style="text-align: justify; text-align-last: left;"">Microsoft Student Chapter is a computing society formed by technology enthusiast in order to create a programming culture in the college.<br>
+    It conducts various programming fests throughout the year some of them being :<br>
+    MS Week<br>
+    Inspirus<br>
+    Rumble<br>
+    All these fests have various events ranging from technical workshop to coding contests.
     </p>
   </div>
-      <?php eventScript($conn, 'msc', 'MSC','Microsoft Student Chapter, Thapar University','msc_events','msc_sub_events','msc_event_gallery'); ?>
-
-  <!-- LUGTU -->
-  <div class="w3-container" id="LUGTU" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Linux User Group.</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
-    <p>The best team in the world.</p>
-    <p style="text-align: justify; text-align-last: left;"">We are lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-    incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    </p>
-  </div>
-  <?php eventScript($conn, 'lugtu', 'LUGTU','Linux User Group, Thapar University','lugtu_events','lugtu_sub_events','lugtu_event_gallery'); ?>
+      <?php eventScript($conn, 'msc', 'MSC', 'Microsoft Student Chapter, Thapar University', 'msc_events', 'msc_sub_events', 'msc_event_gallery', 'https://www.facebook.com/msc2k17/'); ?>
 
   <!-- OWASP -->
   <div class="w3-container" id="OWASP" style="margin-top:75px">
     <h1 class="w3-xxxlarge w3-text-red"><b>OWASP.</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
-    <p>The best team in the world.</p>
-    <p style="text-align: justify; text-align-last: left;"">We are lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-    incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    <p style="text-align: justify; text-align-last: left;"">The Open Web Application Security Project (OWASP) is a worldwide not-for-profit organization with the main objective of increasing awareness about application software security.<br><br>
+
+    The OWASP thapar student chapter mainly focuses on helping aspiring security geeks to learn and grow. Regular sessions such as meetings,workshops and events helps to share ideas frequently and implementing those ideas.
+    Besides this, OWASP thapar student chapter also promotes students to work on projects.<br>
+
+    We believe Deuteronomy Rabbah rightly said "In vain have you acquired knowledge if you have not imparted it to others."
+    OWASP thapar student chapter encourages students to work more on their ideas and provides them with the platform to share their knowledge and experiences with others.
     </p>
   </div>
-  <?php eventScript($conn, 'owasp', 'OWASP','OWASP Student Chapter, Thapar University','owasp_events','owasp_sub_events','owasp_event_gallery'); ?>
+  <?php eventScript($conn, 'owasp', 'OWASP', 'OWASP Student Chapter, Thapar University', 'owasp_events', 'owasp_sub_events', 'owasp_event_gallery', 'https://www.facebook.com/owasptsc/'); ?>
 
   <!-- The Team -->
   <!--div class="w3-row-padding w3-grayscale">
@@ -1254,7 +1252,7 @@ if(loggedin()){
             <select name="contact_coordinator_id">
             <option>Select</option>
             <?php
-              $query = "select  `id`,`firstname`,`lastname`,`society` from `users`";
+              $query = "select  `id`, `firstname`, `lastname`, `society` from `users`";
               $query_run = mysqli_query($conn,$query);
               while ($fetched_row = mysqli_fetch_assoc($query_run)) {
 
@@ -1275,7 +1273,7 @@ if(loggedin()){
         <input class="w3-input w3-border" type="text" name="contact_message" required>
       </div>
 
-      <button type="submit" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom">Send Message</button>
+      <button type="submit" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom" onclick="showLoader()">Send Message</button>
 
     </form>  
 
@@ -1285,6 +1283,13 @@ if(loggedin()){
 </div>
 
 <script>
+  function showLoader() {
+    document.getElementById("loading").style.display = "block";
+  }
+  function hideLoader() {
+    document.getElementById("loading").style.display = "none";
+  }
+
 // Script to open and close sidebar
 function w3_open() {
     document.getElementById("mySidebar").style.display = "block";

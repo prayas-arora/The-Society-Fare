@@ -64,13 +64,21 @@ try {
     $mail->Body    = $body;
     $mail->AltBody = strip_tags($body);
 
-    $mail->send();
     echo '
+    <script>
+        showLoader();
+    </script>
+    ';
+
+    if($mail->send()){
+        echo '
       <script>
         alert("Message sent via E-mail");
         setTimeout(`window.location="homePage.php"`,1);
       </script>
     ';
+    }
+    
 } catch (Exception $e) {
     echo '
             <script>

@@ -1,7 +1,23 @@
 <?php
 require 'connect.inc.php';
+
+function my_session_start($timeout = 20*60) {
+    ini_set('session.gc_maxlifetime', $timeout);
+    session_start();
+
+    if (isset($_SESSION['timeout_idle']) && $_SESSION['timeout_idle'] < time()) {
+        session_destroy();
+        session_start();
+        session_regenerate_id();
+        $_SESSION = array();
+        header("Location:homePage.php");
+    }
+
+    $_SESSION['timeout_idle'] = time() + $timeout;
+}
+
 ob_start();
-session_start();
+my_session_start();
 $current_file = $_SERVER['SCRIPT_NAME'];
 
 if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
@@ -10,8 +26,8 @@ if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
 
 function loggedin()
 {
-	if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {
-		return true;
+	if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {    
+    return true;      
 	}
 	else{
 		return false;
@@ -32,7 +48,7 @@ function getfield($table_name,$field){
 
 <?php
 	
-	function eventScript($conn, $society, $society_CAPS, $society_name, $society_table_name, $society_sub_event_table_name, $society_event_gallery_table_name){
+	function eventScript($conn, $society, $society_CAPS, $society_name, $society_table_name, $society_sub_event_table_name, $society_event_gallery_table_name, $fb_link){
 echo '<div>';
 	    global $count_events_of_same_year;
 
@@ -91,7 +107,7 @@ echo '<div>';
                     if($row_sub_event['sub_event_venue'] != NULL){echo '<br><b>Venue :                  </b>';        echo $row_sub_event['sub_event_venue'];}
                     if($row_sub_event['sub_event_time'] != NULL){echo '<br><b>Time :                     </b>';       echo $row_sub_event['sub_event_time'];}
                     if($row_sub_event['sub_event_no_of_students'] != NULL){echo '<br><b>No. of students : </b>';        echo $row_sub_event['sub_event_no_of_students'];}
-                    echo '<br><b>Facebook Link :   </b>';    echo '<a href="https://www.facebook.com/'.$society.'.thapar/" style="color: blue;">facebook/'.$society.'</a>';
+                    echo '<br><b>Facebook Link :   </b>';    echo '<a target="_blank" href='.$fb_link.' style="color: blue;">facebook/'.$society.'</a>';
                     if($row_sub_event['sub_event_speaker'] != NULL){echo '<br><b>Speaker :               </b>';        echo $row_sub_event['sub_event_speaker'].'<br>';}
                     if($row_sub_event['sub_event_brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $row_sub_event['sub_event_brief_bio'];}
                     if($row_sub_event['sub_event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="SOCIETIES DATA/'.$society_CAPS.'/uploads/posters/sub_events/'.$row_sub_event['sub_event_poster'].'"><br>';}
@@ -197,7 +213,7 @@ echo '<div>';
                     if($event_row['event_venue'] != NULL){echo '<br><b>Venue :                  </b>';        echo $event_row['event_venue'];}
                     if($event_row['event_time'] != NULL){echo '<br><b>Time :                     </b>';       echo $event_row['event_time'];}
                     if($event_row['no_of_students'] != NULL){echo '<br><b>No. of students : </b>';        echo $event_row['no_of_students'];}
-                    echo '<br><b>Facebook Link :   </b>';    echo '<a href="https://www.facebook.com/'.$society.'.thapar/" style="color: blue;">facebook/'.$society.'</a>';
+                    echo '<br><b>Facebook Link :   </b>';    echo '<a target="_blank" href='.$fb_link.' style="color: blue;">facebook/'.$society.'</a>';
                     if($event_row['event_speaker'] != NULL){echo '<br><b>Speaker :               </b>';        echo $event_row['event_speaker'].'<br>';}
                     if($event_row['brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $event_row['brief_bio'];}
                     if($event_row['event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="SOCIETIES DATA/'.$society_CAPS.'/uploads/posters/main_events/'.$event_row['event_poster'].'"><br>';}
