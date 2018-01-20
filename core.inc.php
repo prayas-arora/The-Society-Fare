@@ -48,7 +48,7 @@ function getfield($table_name,$field){
 
 <?php
 	
-	function eventScript($conn, $society, $society_CAPS, $society_name, $society_table_name, $society_sub_event_table_name, $society_event_gallery_table_name, $fb_link){
+	function eventScript($conn, $society, $society_CAPS, $society_name, $society_table_name, $society_sub_event_table_name, $society_event_gallery_table_name, $fb_link, $disp_delete="none"){
 echo '<div>';
 	    global $count_events_of_same_year;
 
@@ -177,12 +177,13 @@ echo '<div>';
                         }else{
                           echo '
                         <script>
+                        document.getElementById("subSpan'.$main_event_id.'-'.$sub_event_id.'").style.display = "'.$disp_delete.'";
+                        document.getElementById("subA'.$main_event_id.'-'.$sub_event_id.'").style.display = "'.$disp_delete.'";
                         document.getElementById("subList'.$main_event_id.'-'.$sub_event_id.'").style.display = "list-item";
                         </script>
                         ';
                         }
                       }
-                      
                     echo '</ul>';
                     
                       echo '</li>';
@@ -285,6 +286,8 @@ echo '<div>';
 						                        else{
 						                          echo '
   					                        <script>
+                                      document.getElementById("subSpan'.$main_event_id.'_'.$year.'").style.display = "'.$disp_delete.'";
+                                      document.getElementById("subA'.$main_event_id.'_'.$year.'").style.display = "'.$disp_delete.'";
   					                          document.getElementById("subList'.$main_event_id.'_'.$year.'").style.display = "list-item";
 						                        </script>
 						                        ';

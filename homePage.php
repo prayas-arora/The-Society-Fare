@@ -47,6 +47,19 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
 <!--New Event Form Validation-->
 <?php
+  global $ccs_delete;
+  global $ssa_delete;
+  global $owasp_delete;
+  global $tedx_delete;
+  global $msc_delete;
+  global $ieee_delete;
+
+  $ccs_delete="none";
+  $ssa_delete="none";
+  $owasp_delete="none";
+  $tedx_delete="none";
+  $msc_delete="none";
+  $ieee_delete="none";
 
 if (loggedin()) {
   global $society_name;
@@ -54,13 +67,14 @@ if (loggedin()) {
   global $society_table_name;
   global $society_sub_event_table_name;
   global $event_gallery;
-   
+
   if($_SESSION['user_id'] == 1 || $_SESSION['user_id'] == 2){
     $society_name = 'ccs';
     $society_name_CAPS = 'CCS';
     $society_table_name = 'ccs_events';
     $society_sub_event_table_name = 'ccs_sub_events';
     $event_gallery = 'ccs_event_gallery';
+    $ccs_delete="inline-block";
   }
     if($_SESSION['user_id'] == 3 || $_SESSION['user_id'] == 4){
       $society_name = 'ssa';
@@ -69,6 +83,7 @@ if (loggedin()) {
       $society_sub_event_table_name = 'ssa_sub_events';
       $event_gallery = 'ssa_event_gallery';
       $fb_link="https://www.facebook.com/ssathaparuniversity/";
+      $ssa_delete="inline-block";
   }
     if($_SESSION['user_id'] == 5){
       $society_name = 'msc';
@@ -77,6 +92,7 @@ if (loggedin()) {
       $society_sub_event_table_name = 'msc_sub_events';
       $event_gallery = 'msc_event_gallery';
       $fb_link="https://www.facebook.com/msc2k17/";
+      $msc_delete="inline-block";
   }
     if($_SESSION['user_id'] == 6 || $_SESSION['user_id'] == 7){
       $society_name = 'owasp';
@@ -85,6 +101,7 @@ if (loggedin()) {
       $society_sub_event_table_name = 'owasp_sub_events';
       $event_gallery = 'owasp_event_gallery';
       $fb_link="https://www.facebook.com/owasptsc/";
+      $owasp_delete="inline-block";
   }
     if($_SESSION['user_id'] == 8 || $_SESSION['user_id'] == 9){
       $society_name = 'tedx';
@@ -93,6 +110,7 @@ if (loggedin()) {
       $society_sub_event_table_name = 'tedx_sub_events';
       $event_gallery = 'tedx_event_gallery';
       $fb_link="https://www.facebook.com/tedxthaparuniversity/";
+      $tedx_delete="inline-block";
   }
     if ($_SESSION['user_id'] == 10){
       $society_name = 'ieee';
@@ -101,6 +119,7 @@ if (loggedin()) {
       $society_sub_event_table_name = 'ieee_sub_events';
       $event_gallery = 'ieee_event_gallery';
       $fb_link="https://www.facebook.com/ieee.thapar/";
+      $ieee_delete="inline-block";
     }
 
     if (isset($_POST['event_name'])) {
@@ -795,10 +814,10 @@ if (loggedin()) {
 <script type="text/javascript">
   var delete_main_event_id;
   var delete_sub_event_id;
-function delete_sub_event(main_event_id,sub_event_id)
+function delete_sub_event(main_event_id, sub_event_id)
 {
   /*window.alert(""+main_event_id+" "+sub_event_id+" ");*/
-     if(confirm('Sure To Remove This Record ?'))
+     if(confirm('Are you sure about removing this record?'))
      {
         window.location.href="homePage.php?delete_main_event_id="+main_event_id+"&delete_sub_event_id="+sub_event_id;
      }
@@ -1122,7 +1141,7 @@ if(loggedin()){
       <p style="text-align: justify; text-align-last: left;"">The Creative Computing Society of Thapar University, commonly known as CCS, has been founded with the vision of nurturing and fostering the youth generation and creating awareness about the reigning era of technology. The student run committee tirelessly works to achieve it's ambition of bridging the gap between students, computers and technology. A highly active group of people, we organize two major events in a year, namely Chakravyuh and Helix. Apart from that we are operational over the year and various technical and ethical learning workshops on hacking, coding, and ethical learning are conducted by experts of the field. CCS is pledged and devoted to provide a strong rostrum for all the budding and aspiring technocrats of Thapar University, so that they can fulfill our aim to make mankind a developed, prosperous and connect it with the trends of tomorrow.
       </p>
       </div>
-      <?php eventScript($conn, 'ccs', 'CCS', 'Creative Computing Society, Thapar University', 'ccs_events', 'ccs_sub_events', 'ccs_event_gallery', 'https://www.facebook.com/CCSTU/'); ?>
+      <?php eventScript($conn, 'ccs', 'CCS', 'Creative Computing Society, Thapar University', 'ccs_events', 'ccs_sub_events', 'ccs_event_gallery', 'https://www.facebook.com/CCSTU/', $ccs_delete); ?>
 
       
   
@@ -1136,7 +1155,7 @@ if(loggedin()){
 
     </p>
   </div>
-  <?php eventScript($conn, 'ssa', 'SSA', 'Spiritual Scientist Alliance, Thapar University', 'ssa_events', 'ssa_sub_events', 'ssa_event_gallery', 'https://www.facebook.com/ssathaparuniversity/'); ?>
+  <?php eventScript($conn, 'ssa', 'SSA', 'Spiritual Scientist Alliance, Thapar University', 'ssa_events', 'ssa_sub_events', 'ssa_event_gallery', 'https://www.facebook.com/ssathaparuniversity/', $ssa_delete); ?>
 
   <!-- TEDx -->
   <div class="w3-container" id="TEDx" style="margin-top:75px">
@@ -1148,7 +1167,7 @@ if(loggedin()){
     Our event is called TEDxThaparUniversity, where x = independently organized TED event. At our TEDxThaparUniversity event, TEDTalks video and live speakers will combine to spark deep discussion and connection in a small group.
     </p>
   </div>
-  <?php eventScript($conn, 'tedx', 'TEDx', 'TEDx, Thapar University', 'tedx_events', 'tedx_sub_events', 'tedx_event_gallery', 'https://www.facebook.com/tedxthaparuniversity/'); ?>
+  <?php eventScript($conn, 'tedx', 'TEDx', 'TEDx, Thapar University', 'tedx_events', 'tedx_sub_events', 'tedx_event_gallery', 'https://www.facebook.com/tedxthaparuniversity/', $tedx_delete); ?>
 
 
   <!-- IEEE -->
@@ -1161,7 +1180,7 @@ if(loggedin()){
                 incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     </p>
   </div>
-      <?php eventScript($conn, 'ieee', 'IEEE', 'IEEE Student Chapter, Thapar University', 'ieee_events', 'ieee_sub_events', 'ieee_event_gallery', 'https://www.facebook.com/ieee.thapar/'); ?>
+      <?php eventScript($conn, 'ieee', 'IEEE', 'IEEE Student Chapter, Thapar University', 'ieee_events', 'ieee_sub_events', 'ieee_event_gallery', 'https://www.facebook.com/ieee.thapar/', $ieee_delete); ?>
 
   <!-- MSC -->
   <div class="w3-container" id="MSC" style="margin-top:75px">
@@ -1175,7 +1194,7 @@ if(loggedin()){
     All these fests have various events ranging from technical workshop to coding contests.
     </p>
   </div>
-      <?php eventScript($conn, 'msc', 'MSC', 'Microsoft Student Chapter, Thapar University', 'msc_events', 'msc_sub_events', 'msc_event_gallery', 'https://www.facebook.com/msc2k17/'); ?>
+      <?php eventScript($conn, 'msc', 'MSC', 'Microsoft Student Chapter, Thapar University', 'msc_events', 'msc_sub_events', 'msc_event_gallery', 'https://www.facebook.com/msc2k17/', $msc_delete); ?>
 
   <!-- OWASP -->
   <div class="w3-container" id="OWASP" style="margin-top:75px">
@@ -1190,7 +1209,7 @@ if(loggedin()){
     OWASP thapar student chapter encourages students to work more on their ideas and provides them with the platform to share their knowledge and experiences with others.
     </p>
   </div>
-  <?php eventScript($conn, 'owasp', 'OWASP', 'OWASP Student Chapter, Thapar University', 'owasp_events', 'owasp_sub_events', 'owasp_event_gallery', 'https://www.facebook.com/owasptsc/'); ?>
+  <?php eventScript($conn, 'owasp', 'OWASP', 'OWASP Student Chapter, Thapar University', 'owasp_events', 'owasp_sub_events', 'owasp_event_gallery', 'https://www.facebook.com/owasptsc/', $owasp_delete); ?>
 
   <!-- The Team -->
   <!--div class="w3-row-padding w3-grayscale">
