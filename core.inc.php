@@ -10,7 +10,7 @@ function my_session_start($timeout = 20*60) {
         session_start();
         session_regenerate_id();
         $_SESSION = array();
-        header("Location:homePage.php");
+        header("Location:index.php");
     }
 
     $_SESSION['timeout_idle'] = time() + $timeout;

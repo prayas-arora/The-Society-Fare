@@ -11,7 +11,7 @@ if($id == 'Select'){
     echo '
       <script>
         alert("Please select a society coordinator to whom you want to contact.");
-        setTimeout(`window.location="homePage.php"`,1);
+        setTimeout(`window.location="index.php"`,1);
       </script>
     ';
  }
@@ -24,7 +24,7 @@ if($id == 'Select'){
             $email = $fetched_row['email_address'];
         }
     }else{
-        header('Location: homePage.php');
+        header('Location: index.php');
         exit;
     } 
 
@@ -74,7 +74,7 @@ try {
         echo '
       <script>
         alert("Message sent via E-mail");
-        setTimeout(`window.location="homePage.php"`,1);
+        setTimeout(`window.location="index.php"`,1);
       </script>
     ';
     }
@@ -83,7 +83,7 @@ try {
     echo '
             <script>
               alert("There was error in sending your message. Please try again later.\n Mailer Error: "' .$mail->ErrorInfo. ');
-              setTimeout(`window.location="homePage.php"`,1);
+              setTimeout(`window.location="index.php"`,1);
             </script>
           ';
 }
