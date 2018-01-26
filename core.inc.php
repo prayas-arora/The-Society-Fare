@@ -110,7 +110,7 @@ echo '<div>';
                     echo '<br><b>Facebook Link :   </b>';    echo '<a target="_blank" href='.$fb_link.' style="color: blue;">facebook/'.$society.'</a>';
                     if($row_sub_event['sub_event_speaker'] != NULL){echo '<br><b>Speaker :               </b>';        echo $row_sub_event['sub_event_speaker'].'<br>';}
                     if($row_sub_event['sub_event_brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $row_sub_event['sub_event_brief_bio'];}
-                    if($row_sub_event['sub_event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="SOCIETIES DATA/'.$society_CAPS.'/uploads/posters/sub_events/'.$row_sub_event['sub_event_poster'].'"><br>';}
+                    if($row_sub_event['sub_event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="societies_data/'.$society_CAPS.'/uploads/posters/sub_events/'.$row_sub_event['sub_event_poster'].'"><br>';}
                     if($row_sub_event['sub_event_report'] != NULL) {echo '<br><br><b>Report : </b>';        echo $row_sub_event['sub_event_report'];}
 
 
@@ -127,11 +127,11 @@ echo '<div>';
                           while ($row_sub_event_attendance = mysqli_fetch_assoc($this_sub_event_query_run)) {
                             $sub_event_attendance_image = $row_sub_event_attendance['sub_event_attendance_image'];
                             if($count_sub_event_attendance == 1){
-                            echo '<br><a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/attendance/sub_events/'.$sub_event_attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.'-'.$sub_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"> <b>Sub Event Attendance</b></a><br><br>';
+                            echo '<br><a href="societies_data/'.$society_CAPS.'/uploads/attendance/sub_events/'.$sub_event_attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.'-'.$sub_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"> <b>Sub Event Attendance</b></a><br><br>';
                             $count_sub_event_attendance++;
                             }
                             else{
-                            echo '<a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/attendance/sub_events/'.$sub_event_attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.'-'.$sub_event_id.']"></a>';
+                            echo '<a href="societies_data/'.$society_CAPS.'/uploads/attendance/sub_events/'.$sub_event_attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.'-'.$sub_event_id.']"></a>';
                             $count_sub_event_attendance++;
                             }
                           
@@ -154,11 +154,11 @@ echo '<div>';
                         while ($row_sub_event_gallery = mysqli_fetch_assoc($this_sub_event_query_run)) {
                           $sub_event_gallery_image = $row_sub_event_gallery['sub_event_image'];
                           if($count_sub_event == 1){
-                          echo '<br><a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/gallery/sub_events/'.$sub_event_gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.'-'.$sub_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"> <b>Sub Event Gallery</b></a><br><br>';
+                          echo '<br><a href="societies_data/'.$society_CAPS.'/uploads/gallery/sub_events/'.$sub_event_gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.'-'.$sub_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"> <b>Sub Event Gallery</b></a><br><br>';
                           $count_sub_event++;
                           }
                           else{
-                          echo '<a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/gallery/sub_events/'.$sub_event_gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.'-'.$sub_event_id.']"></a>';
+                          echo '<a href="societies_data/'.$society_CAPS.'/uploads/gallery/sub_events/'.$sub_event_gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.'-'.$sub_event_id.']"></a>';
                           $count_sub_event++;
                           }
                         
@@ -217,7 +217,7 @@ echo '<div>';
                     echo '<br><b>Facebook Link :   </b>';    echo '<a target="_blank" href='.$fb_link.' style="color: blue;">facebook/'.$society.'</a>';
                     if($event_row['event_speaker'] != NULL){echo '<br><b>Speaker :               </b>';        echo $event_row['event_speaker'].'<br>';}
                     if($event_row['brief_bio'] != NULL){echo '<br><b>Brief Bio : </b>';        echo $event_row['brief_bio'];}
-                    if($event_row['event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="SOCIETIES DATA/'.$society_CAPS.'/uploads/posters/main_events/'.$event_row['event_poster'].'"><br>';}
+                    if($event_row['event_poster'] != NULL) {echo '<br><b><br>Poster Circulated : <br></b><br>';        echo '<img style="width: 50%;" src="societies_data/'.$society_CAPS.'/uploads/posters/main_events/'.$event_row['event_poster'].'"><br>';}
                     if($event_row['event_report'] != NULL) {echo '<br><br><b>Report : </b>';        echo $event_row['event_report'];}
                     
                       echo '</p>';
@@ -233,11 +233,11 @@ echo '<div>';
                           while ($row_attendance = mysqli_fetch_assoc($this_query_run)) {
                             $attendance_image = $row_attendance['main_event_attendance_image'];
                             if($count_attendance == 1){
-                            echo '<br><a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/attendance/main_events/'.$attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"><b>Event Attendance</b></a><br><br>';
+                            echo '<br><a href="societies_data/'.$society_CAPS.'/uploads/attendance/main_events/'.$attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"><b>Event Attendance</b></a><br><br>';
                             $count_attendance++;
                             }
                             else{
-                            echo '<a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/attendance/main_events/'.$attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.']"></a>';
+                            echo '<a href="societies_data/'.$society_CAPS.'/uploads/attendance/main_events/'.$attendance_image.'" rel="lightbox['.$society_CAPS.'-event-attendance-'.$main_event_id.']"></a>';
                             $count_attendance++;
                             }
                           
@@ -257,11 +257,11 @@ echo '<div>';
                         while ($row_gallery = mysqli_fetch_assoc($this_query_run)) {
                           $gallery_image = $row_gallery['main_event_image'];
                           if($count == 1){
-                          echo '<br><a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"><b>Event Gallery</b></a><br><br>';
+                          echo '<br><a href="societies_data/'.$society_CAPS.'/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.']" style="text-decoration: none; border: solid; padding: 4px;"><b>Event Gallery</b></a><br><br>';
                           $count++;
                           }
                           else{
-                          echo '<a href="SOCIETIES DATA/'.$society_CAPS.'/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.']"></a>';
+                          echo '<a href="societies_data/'.$society_CAPS.'/uploads/gallery/main_events/'.$gallery_image.'" rel="lightbox['.$society_CAPS.'-event-'.$main_event_id.']"></a>';
                           $count++;
                           }
                         
