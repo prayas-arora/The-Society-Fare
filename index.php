@@ -848,12 +848,12 @@ if(loggedin()){
 <body onload="hideLoader()">
 <div id="loading"></div>
 <!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
-  <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large" style="width:100%;font-size:22px; margin-top: -10%; margin-bottom: 5%">Close Menu</a>
+<nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3; width:300px; font-weight:bold;" id="mySidebar"><br>
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large" style="width:100%;font-size:22px; margin-top: -10%; margin-bottom: 5%; margin-left: -18%">Close Menu</a>
   <div class="w3-container">
     <a class="navbar-brand pull-left visible-sm visible-md visible-lg" target="_blank" href="http://www.thapar.edu/" style="text-decoration: none;">
       <div class="LOGO img-responsive">
-        <img src="images/TULogo2.png">
+        <img src="images/tulogo2.png">
       </div>
       <h3 class="w3-padding-44" style="font-size: 27px;">Thapar University</h3> 
     </a>
@@ -864,7 +864,7 @@ if(loggedin()){
 
     <?php
     if (!loggedin()) {
-      echo '<a onclick="document.getElementById(`id01`).style.display=`block`" class="w3-bar-item w3-button w3-hover-white">Society Coordinator Login</a>';
+      echo '<a onclick="document.getElementById(`id01`).style.display=`block`; w3_close();" class="w3-bar-item w3-button w3-hover-white">Society Coordinator Login</a>';
     }else{
       echo '<a onclick="document.getElementById(`ADD_EVENT`).style.display=`block`" class="w3-bar-item w3-button w3-hover-white">Add new event</a>';
       echo '<a onclick="document.getElementById(`ADD_SUB_EVENT`).style.display=`block`" class="w3-bar-item w3-button w3-hover-white">Add new sub - event</a>';
@@ -895,10 +895,10 @@ if(loggedin()){
 
       <div class="container-fluid">
           <label><b>Username</b></label>
-          <input type="text" placeholder="Enter Username" name="username" minlength="4" maxlength="50" required>
+          <input type="text" placeholder="Enter Username" name="username" minlength="4" maxlength="50" autocomplete="off" required>
 
           <label><b>Password</b></label>
-          <input type="password" placeholder="Enter Password" name="password" minlength="6" required>
+          <input type="password" placeholder="Enter Password" name="password" minlength="6" autocomplete="off" required>
             
           <button type="submit">Login</button>
       
@@ -917,27 +917,27 @@ if(loggedin()){
       </div>
 
       <div class="container-fluid">
-        <input type="hidden" name="newEventForm" value="true">
+        <input type="hidden" name="newEventForm" value="true" autocomplete="off">
           <label><b>Event Name</b></label>
-          <input type="text" placeholder="Enter Event Name" name="event_name" maxlength="100" required>
+          <input type="text" placeholder="Enter Event Name" name="event_name" maxlength="100" autocomplete="off" required >
 
           <label><b>Date</b></label>
-          <input type="text" placeholder="Enter Event Date" name="event_date" maxlength="30" >
+          <input type="text" placeholder="Enter Event Date" name="event_date" maxlength="30" autocomplete="off">
 
           <label><b>Time</b></label>
-          <input type="text" placeholder="Enter Event Time" name="event_time" maxlength="30" >
+          <input type="text" placeholder="Enter Event Time" name="event_time" maxlength="30" autocomplete="off">
 
           <label><b>Year of Event</b></label>
-          <input type="text" placeholder="Enter Year of Event (2016,2017..)" name="event_year" maxlength="10" required>
+          <input type="text" placeholder="Enter Year of Event (2016,2017..)" name="event_year" maxlength="10" autocomplete="off" required>
 
           <label><b>Venue</b></label>
-          <input type="text" placeholder="Enter Event Venue" name="event_venue" maxlength="30" >
+          <input type="text" placeholder="Enter Event Venue" name="event_venue" maxlength="30" autocomplete="off">
 
           <label><b>No. of students</b></label>
-          <input type="text" placeholder="Enter the no. of students who attended the event" name="no_of_students" >
+          <input type="text" placeholder="Enter the no. of students who attended the event" name="no_of_students"autocomplete="off">
 
           <label><b>Speaker</b></label>
-          <input type="text" placeholder="Enter Speaker Name" name="event_speaker" >
+          <input type="text" placeholder="Enter Speaker Name" name="event_speaker" autocomplete="off">
           
           <label><b>Brief Bio:</b></label>
           <textarea id="bio_text" cols="69%" rows="8" style="width: 100%;" name="event_bio" placeholder="Enter a brief bio of the event" ></textarea><br><br>
@@ -946,13 +946,13 @@ if(loggedin()){
           <textarea id="report_text" cols="69%" rows="8" style="width: 100%;" name="event_report" placeholder="Enter a brief report of the event" ></textarea><br><br>
 
           <label><b>Attendance &nbsp&nbsp</b></label>
-          <input type="file" name="event_attendance_image[]"  multiple="multiple" accept="image/*" required><br><br>
+          <input type="file" name="event_attendance_image[]"  multiple="multiple" accept="image/*" autocomplete="off" required><br><br>
 
           <label><b>Event poster &nbsp</b></label>
-          <input type="file" name="poster_image" accept="image/*" required><br><br>
+          <input type="file" name="poster_image" accept="image/*" autocomplete="off" required><br><br>
 
           <label><b>Event images</b></label>
-          <input type="file" name="gallery_images[]" multiple="multiple" accept="image/*"/><br><br>
+          <input type="file" name="gallery_images[]" multiple="multiple" autocomplete="off" accept="image/*"/><br><br>
 
           <button type="submit" name = "submit_newEventForm">Add Event</button>
       
@@ -971,7 +971,7 @@ if(loggedin()){
       </div>
 
       <div class="container-fluid">
-        <input type="hidden" name="newSubEventForm" value="true">
+        <input type="hidden" name="newSubEventForm" value="true" autocomplete="off">
           <label><b>Select main event</b></label>
           <br>
           
@@ -990,25 +990,25 @@ if(loggedin()){
         <br><br>
 
           <label><b>Sub Event Name</b></label>
-          <input type="text" placeholder="Enter Event Name" name="sub_event_name" maxlength="100" required>
+          <input type="text" placeholder="Enter Event Name" name="sub_event_name" maxlength="100" autocomplete="off" required>
           
           <label><b>Date</b></label>
-          <input type="text" placeholder="Enter Event Date" name="sub_event_date" maxlength="30" required>
+          <input type="text" placeholder="Enter Event Date" name="sub_event_date" maxlength="30" autocomplete="off" required>
 
           <label><b>Year of Event</b></label>
-          <input type="text" placeholder="Enter Year of Event (2016,2017..)" name="sub_event_year" maxlength="10" required>
+          <input type="text" placeholder="Enter Year of Event (2016,2017..)" name="sub_event_year" autocomplete="off" maxlength="10" required>
 
           <label><b>Time</b></label>
-          <input type="text" placeholder="Enter Event Time" name="sub_event_time" maxlength="30">
+          <input type="text" placeholder="Enter Event Time" name="sub_event_time" autocomplete="off" maxlength="30">
 
           <label><b>Venue</b></label>
-          <input type="text" placeholder="Enter Event Venue" name="sub_event_venue" maxlength="30">
+          <input type="text" placeholder="Enter Event Venue" name="sub_event_venue" autocomplete="off" maxlength="30">
 
           <label><b>No. of students</b></label>
-          <input type="text" placeholder="Enter the no. of students who attended the event" name="sub_event_no_of_students">
+          <input type="text" placeholder="Enter the no. of students who attended the event" name="sub_event_no_of_students" autocomplete="off">
 
           <label><b>Speaker</b></label>
-          <input type="text" placeholder="Enter Speaker Name" name="sub_event_speaker">
+          <input type="text" placeholder="Enter Speaker Name" name="sub_event_speaker" autocomplete="off">
           
           <label><b>Brief Bio:</b></label>
           <textarea id="bio_text" cols="69%" rows="8" style="width: 100%;" name="sub_event_bio" placeholder="Enter a brief bio about the event" ></textarea><br><br>
@@ -1017,13 +1017,13 @@ if(loggedin()){
           <textarea id="sub_event_report_text" cols="69%" rows="8" style="width: 100%;" name="sub_event_report" placeholder="Enter a brief report of the sub-event" ></textarea><br><br>
 
           <label><b>Attendance &nbsp&nbsp</b></label>
-          <input type="file" name="sub_event_attendance_image[]" multiple="multiple" accept="image/*" required><br><br>
+          <input type="file" name="sub_event_attendance_image[]" multiple="multiple" accept="image/*" autocomplete="off" required><br><br>
 
           <label><b>Event poster &nbsp</b></label>
-          <input type="file" name="sub_event_poster_image" accept="image/*" required><br><br>
+          <input type="file" name="sub_event_poster_image" accept="image/*" autocomplete="off" required><br><br>
 
           <label><b>Event images</b></label>
-          <input type="file" name="sub_event_gallery_images[]" multiple="multiple" accept="image/*"/><br><br>
+          <input type="file" name="sub_event_gallery_images[]" multiple="multiple" autocomplete="off" accept="image/*"/><br><br>
 
           <button type="submit"  name = "submit_newSubEventForm">Add sub Event</button>
       
@@ -1046,29 +1046,29 @@ if(loggedin()){
   <!-- Photo grid (modal) -->
   <div class="w3-row-padding">
     <div class="w3-third" >
-      <a href="#CCS" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/CCS/CCS_LOGO.png" style="width:110%; height:35%; padding-right: 5%;" alt="Creative Computing Society"> </a>
+      <a href="#CCS" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/CCS/ccslogo.png" style="width:110%; height:35%; padding-right: 5%;" alt="Creative Computing Society"> </a>
     </div>
 
     <div class="w3-third">
-      <a href="#TEDx" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/TEDx/tEDx-logo.png" style="padding-top: 30%;  width:100%;" alt="TEDx"> </a>
+      <a href="#TEDx" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/TEDx/tedxlogo.png" style="padding-top: 30%;  width:100%;" alt="TEDx"> </a>
     </div>
 
     <div class="w3-third">
-        <a href="#MSC" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/MSC/logo_msc.png" style="width:100%;" alt="Microsoft Student Chapter"> </a>
+        <a href="#MSC" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/MSC/logomsc.png" style="width:100%;" alt="Microsoft Student Chapter"> </a>
     </div>
   </div>
 
   <div class="w3-row-padding">
     <div class="w3-third">
-      <a href="#OWASP" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/OWASP/OWASP-logo.png" style="width:75%;"  alt="Open Web Application Security Project"> </a>
+      <a href="#OWASP" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/OWASP/owasplogo.png" style="width:75%;"  alt="Open Web Application Security Project"> </a>
     </div>
 
     <div class="w3-third">
-        <a href="#IEEE" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/IEEE/IEEE_LOGO.jpg" style="width:60%;" alt="IEEE"> </a>
+        <a href="#IEEE" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/IEEE/ieeelogo.jpg" style="width:60%;" alt="IEEE"> </a>
     </div>
 
     <div class="w3-third">
-        <a href="#SSA" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/SSA/SSA.png" style="width:100%;"  alt="Spiritual Scientist Alliance"> </a>
+        <a href="#SSA" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/SSA/ssa.png" style="width:100%;"  alt="Spiritual Scientist Alliance"> </a>
     </div>
 
   </div>
@@ -1181,11 +1181,11 @@ if(loggedin()){
     <form action = "send_email.php" method = "POST" enctype="multipart/form-data">
       <div class="w3-section">
         <label><b>Name</b></label>
-        <input class="w3-input w3-border" type="text" name="contact_name" placeholder="Your Name" required>
+        <input class="w3-input w3-border" type="text" name="contact_name" placeholder="Your Name" autocomplete="off" required>
       </div>
       <div class="w3-section">
         <label><b>Email Address</b></label>
-        <input class="w3-input w3-border" type="email" name="sender_email" placeholder="Your email address" required>
+        <input class="w3-input w3-border" type="email" name="sender_email" placeholder="Your email address" autocomplete="off" required>
       </div>
       <div class="w3-section">
         <!--class="w3-input w3-border"-->
@@ -1209,7 +1209,7 @@ if(loggedin()){
         <br><br>
       <div class="w3-section">
         <label><b>Message</b></label>
-        <input class="w3-input w3-border" type="text" name="contact_message" required>
+        <input class="w3-input w3-border" type="text" name="contact_message" autocomplete="off" required>
       </div>
       <button type="submit" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom" onclick="showLoader()">Send Message</button>
     </form>  
