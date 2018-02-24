@@ -14,7 +14,6 @@ global $prependPath;
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
     $prependPath='';
 } else {
-    echo 'This is a server not using Windows!';
     $prependPath='/var/www/html/sf/';
 }
 ?>
@@ -182,11 +181,14 @@ if (loggedin()) {
         $poster_size = @$_FILES['poster_image']['size'];
         $poster_type = @$_FILES['poster_image']['type'];
         $poster_tmp_name = @$_FILES['poster_image']['tmp_name'];
+        if(!file_exists($poster_tmp_name)){
+          echo "akshjsapovibasplkncijdbasjadabncapsosjbacncdomahbscbpoaiobcadauan";
+        }
         $extension = strtolower(substr($poster_name, strrpos($poster_name,'.') + 1));
         if (isset($poster_name)) {
           if(!empty($poster_name)){
             if (($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') && ($type = 'image/*') && ($poster_size < $max_file_size)) {
-              $location = 'societies_data/'.$society_name_CAPS.'/uploads/posters/main_events/';
+              $location = $prependPath.'societies_data/'.$society_name_CAPS.'/uploads/posters/main_events/';
               if(move_uploaded_file($poster_tmp_name, $location.$poster_name)){}
               else{
                 echo '
@@ -222,7 +224,7 @@ if (loggedin()) {
         
   // GALLERY Images
         $valid_formats = array("jpg", "jpeg", "png", "gif", "zip", "bmp", "JPG", "JPEG", "PNG", "GIF", "ZIP", "BMP");
-        $path = "societies_data/".$society_name_CAPS."/uploads/gallery/main_events/"; // Upload directory
+        $path = $prependPath."societies_data/".$society_name_CAPS."/uploads/gallery/main_events/"; // Upload directory
         $count_gallery = 0;
         $error = 0;
         foreach ($_FILES['gallery_images']['name'] as $f => $name) {    
@@ -311,7 +313,7 @@ if (loggedin()) {
         } 
         // ATTENDANCE Images
         //
-        $path = "societies_data/".$society_name_CAPS."/uploads/attendance/main_events/"; // Upload directory
+        $path = $prependPath."societies_data/".$society_name_CAPS."/uploads/attendance/main_events/"; // Upload directory
         $count_attendance = 0;
         $error = 0;
         foreach ($_FILES['event_attendance_image']['name'] as $f => $name) {  
@@ -487,7 +489,7 @@ if (loggedin()) {
         if (isset($sub_event_poster_name)) {
           if(!empty($sub_event_poster_name)){
             if (($sub_event_extension == 'jpg' || $sub_event_extension == 'jpeg' || $sub_event_extension == 'png') && ($type = 'image/*') && ($sub_event_poster_size < $max_file_size)) {
-              $location = 'societies_data/'.$society_name_CAPS.'/uploads/posters/sub_events/';
+              $location = $prependPath.'societies_data/'.$society_name_CAPS.'/uploads/posters/sub_events/';
               if(move_uploaded_file($sub_event_poster_tmp_name, $location.$sub_event_poster_name)){}
               else{
                 echo '
@@ -566,7 +568,7 @@ if (loggedin()) {
         
   // GALLERY Images
         $valid_formats = array("jpg", "jpeg", "png", "gif", "zip", "bmp", "JPG", "JPEG", "PNG", "GIF", "ZIP", "BMP");
-        $path = "societies_data/".$society_name_CAPS."/uploads/gallery/sub_events/"; // Upload directory
+        $path = $prependPath."societies_data/".$society_name_CAPS."/uploads/gallery/sub_events/"; // Upload directory
         $count = 0;
         $error = 0;
         foreach ($_FILES['sub_event_gallery_images']['name'] as $f => $name) {     
@@ -656,7 +658,7 @@ if (loggedin()) {
             ';
         } 
       // sub-event ATTENDANCE Images
-        $path = "societies_data/".$society_name_CAPS."/uploads/attendance/sub_events/"; // Upload directory
+        $path = $prependPath."societies_data/".$society_name_CAPS."/uploads/attendance/sub_events/"; // Upload directory
         $count_sub_event_attendance = 0;
         $error = 0;
         foreach ($_FILES['sub_event_attendance_image']['name'] as $f => $name) {     
@@ -955,10 +957,10 @@ if(loggedin()){
           <textarea id="report_text" cols="69%" rows="8" style="width: 100%;" name="event_report" placeholder="Enter a brief report of the event" ></textarea><br><br>
 
           <label><b>Attendance &nbsp&nbsp</b></label>
-          <input type="file" name="event_attendance_image[]"  multiple="multiple" accept="image/*" autocomplete="off"><br><br>
+          <input type="file" name="event_attendance_image[]"  multiple="multiple" accept="image/*" autocomplete="off" required><br><br>
 
           <label><b>Event poster &nbsp</b></label>
-          <input type="file" name="poster_image" accept="image/*" autocomplete="off"><br><br>
+          <input type="file" name="poster_image" accept="image/*" autocomplete="off" required><br><br>
 
           <label><b>Event images</b></label>
           <input type="file" name="gallery_images[]" multiple="multiple" autocomplete="off" accept="image/*"/><br><br>
