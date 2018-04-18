@@ -1,4 +1,5 @@
 <?php
+require_once 'vendor/phpmailer/phpmailer/vendor/autoload.php';
 require 'core.inc.php';
 require 'connect.inc.php';
 if (loggedin()) {
@@ -14,7 +15,7 @@ global $prependPath;
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
     $prependPath='';
 } else {
-    echo 'This is a server not using Windows!';
+    //This is a server not using Windows!;
     $prependPath='/var/www/html/sf/';
 }
 ?>
@@ -861,11 +862,12 @@ if(loggedin()){
   <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large" style="width:100%;font-size:22px; margin-top: -10%; margin-bottom: 5%; margin-left: -18%">Close Menu</a>
   <div class="w3-container">
     <a class="navbar-brand pull-left visible-sm visible-md visible-lg" target="_blank" href="http://www.thapar.edu/" style="text-decoration: none;">
-      <div class="LOGO img-responsive">
-        <img src="images/tulogo2.png">
+      <div class="LOGO img-responsive" style="padding-bottom: 5%">
+        <img src="images/tulogo2.png" style="width:80%; height: 20%; border-radius: 12px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
       </div>
-      <h3 class="w3-padding-44" style="font-size: 27px;">Thapar University</h3> 
+      <h3 class="w3-padding-44" style="font-size: 20px;">THAPAR INSTITUE OF ENGINEERING &AMP TECHNOLOGY</h3>
     </a>
+    <br>
   </div>
   <div class="w3-bar-block">
     <!--a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a-->
@@ -882,12 +884,17 @@ if(loggedin()){
     ?>  
     <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contact</a>
   </div>
+  <div class="footer-copyright" style="margin-right:45%; margin-top:64%;">
+            <div class="container" style="font-size:60%; color: black; padding-left: 2%;"
+            style="border-style: solid; border-width: 1px; border-color: black; padding-left: 10%; padding-right: 10%">Developer : @Prayas Arora
+            </div>
+          </div>
 </nav>
 
 <!-- Top menu on small screens -->
 <header class="w3-container w3-hide-large w3-red w3-xlarge w3-padding">
   <a href="javascript:void(0)" class="w3-button w3-red w3-margin-right" onclick="w3_open()">☰</a>
-  <span>Thapar University</span>
+  <span>THAPAR INSTITUE OF ENGINEERING &AMP TECHNOLOGY</span>
 </header>
 
 <!-- Overlay effect when opening sidebar on small screens -->
@@ -1055,7 +1062,7 @@ if(loggedin()){
   <!-- Photo grid (modal) -->
   <div class="w3-row-padding">
     <div class="w3-third" >
-      <a href="#CCS" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/CCS/ccslogo.png" style="width:110%; height:35%; padding-right: 5%;" alt="Creative Computing Society"> </a>
+      <a href="#CCS" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"> <img src="images/CCS/ccslogo.png" style="width:110%; height:35%; padding-right: 5%; " alt="Creative Computing Society"> </a>
     </div>
 
     <div class="w3-third">
@@ -1187,7 +1194,7 @@ if(loggedin()){
     <h1 class="w3-xxxlarge w3-text-red"><b>Contact.</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
     <p>Do you want to contact a society coordinator ? Fill out the form and fill in the details :) We'll deliver your message!</p>
-    <form action = "send_email.php" method = "POST" enctype="multipart/form-data">
+    <form action = "SMTP_send_email.php" method = "POST" enctype="multipart/form-data">
       <div class="w3-section">
         <label><b>Name</b></label>
         <input class="w3-input w3-border" type="text" name="contact_name" placeholder="Your Name" autocomplete="off" required>

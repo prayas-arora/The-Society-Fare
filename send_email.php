@@ -34,7 +34,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 //Load composer's autoloader
-require 'vendor/autoload.php';
+require 'vendor/phpmailer/phpmailer/vendor/autoload.php';
 
 $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
 try {
@@ -50,7 +50,7 @@ try {
 
 */
     //Sender
-    $mail->setFrom('arora.prayas@gmail.com', 'Prayas Arora');
+    $mail->setFrom('societyfair@thapar.edu', 'Bot');
     
     //Recipients
     $mail->addAddress($email, $name);     // Add a recipient

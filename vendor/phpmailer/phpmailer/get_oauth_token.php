@@ -81,6 +81,11 @@ $clientSecret = 'RANDOMCHARS-----lGyjPcRtvP';
 $redirectUri = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 //$redirectUri = 'http://localhost/PHPMailer/redirect';
 
+//lines 85-87 were added by me
+$redirectUri = 'http://appforms.thapar.edu/sf/vendor/phpmailer/phpmailer/get_oauth_token.php';
+$clientId = '676765708477-a8b9eqcob8diih56kjaec7tti8dgt1sa.apps.googleusercontent.com';
+$clientSecret = 'FKNtxpoPwV_MmaFC48Hpug4T';
+
 $params = [
     'clientId' => $clientId,
     'clientSecret' => $clientSecret,
@@ -142,3 +147,5 @@ if (!isset($_GET['code'])) {
     // Use this to get a new access token if the old one expires
     echo 'Refresh Token: ', $token->getRefreshToken();
 }
+
+?>
